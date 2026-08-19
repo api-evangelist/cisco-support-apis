@@ -14,12 +14,8 @@ x-source: cisco-family-buildout:2026-08-19
 x-parent: cisco
 x-relationship: product
 x-contract-status: gated
-x-contract-note: Cisco DOES publish a machine-readable contract for all eight Support APIs — a WADL per API, linked
-  from the public docs, plus a Swagger YAML for Automated Software Distribution v4.0 — but every download resolves
-  to apiconsole.cisco.com and returns HTTP 403 without a Cisco API Console sign-in (probed 2026-08-19). No OpenAPI
-  is anonymously fetchable. The only first-party machine-readable artifact a member of the public can download is
-  the CiscoDevNet Postman collection (BSD-3, last updated 2020-08-07), saved verbatim under postman/. API Evangelist
-  has NOT authored a substitute contract. See contracts/cisco-support-apis-published-contracts.yml.
+x-contract-note: The Cisco Support APIs require a Smart Net Total Care or partner entitlement; no anonymously fetchable
+  contract is served. API Evangelist has not authored a substitute.
 specificationVersion: '0.23'
 created: '2026-08-19'
 modified: '2026-08-19'
