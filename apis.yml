@@ -1,0 +1,46 @@
+aid: cisco-support-apis
+name: Cisco Support APIs
+description: 'The Cisco Support APIs are the machine-readable side of Cisco''s TAC and lifecycle operations: EoX
+  for end-of-life milestones, Serial Number to Information for entitlement and coverage, Product Information, Software
+  Suggestion, Bug, Case, Automated Software Distribution, and Service Order Return. They are the APIs that let an
+  enterprise reconcile its Cisco estate against support status programmatically, and are documented on Cisco DevNet
+  behind a Smart Net Total Care or partner entitlement.'
+url: https://raw.githubusercontent.com/api-evangelist/cisco-support-apis/refs/heads/main/apis.yml
+type: Index
+access: 3rd-Party
+position: Consumer
+x-type: company
+x-source: cisco-family-buildout:2026-08-19
+x-parent: cisco
+x-relationship: product
+x-contract-status: none
+x-contract-note: No anonymously fetchable machine-readable contract was found on 2026-08-19 (probed; real 404s).
+  API Evangelist has not authored a substitute.
+specificationVersion: '0.23'
+created: '2026-08-19'
+modified: '2026-08-19'
+tags:
+- Support
+- Lifecycle
+- Asset Management
+- Entitlement
+- Enterprise
+- Networking
+apis: []
+common:
+- type: Portal
+  url: https://developer.cisco.com/docs/support-apis/
+- type: Documentation
+  url: https://developer.cisco.com/docs/support-apis/
+- type: APIReference
+  url: https://developer.cisco.com/docs/support-apis/
+- type: ParentCompany
+  url: https://apis.io/providers/cisco/
+  name: Cisco
+- type: Portal
+  url: https://developer.cisco.com/
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
+- FN: APIs.json
+  email: info@apis.io
