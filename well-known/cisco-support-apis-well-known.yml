@@ -1,0 +1,112 @@
+generated: '2026-08-19'
+method: probed
+description: >-
+  Results of probing the /.well-known/ discovery surface for every host the Cisco
+  Support APIs touch: the API gateway host (apix.cisco.com), the legacy gateway host
+  named in Cisco's own Postman environment (api.cisco.com), the documentation host
+  (developer.cisco.com), the API Console / key-issuance host (apiconsole.cisco.com),
+  the identity host the authentication docs name (id.cisco.com) and the organization
+  root (www.cisco.com). Status is the HTTP code observed at fetch time. Two real
+  documents were returned and saved verbatim; everything else was a real miss.
+  apix.cisco.com and api.cisco.com are Mashery gateways that answer 504 to any path
+  that is not a routed API, so a 504 there is an absence, not an outage.
+hosts:
+  - host: https://apix.cisco.com
+    note: Primary Support APIs base host. Mashery gateway; unrouted paths return 504.
+    documents:
+      - path: /.well-known/security.txt
+        status: 504
+      - path: /.well-known/openid-configuration
+        status: 504
+      - path: /.well-known/oauth-authorization-server
+        status: 504
+      - path: /.well-known/api-catalog
+        status: 504
+      - path: /.well-known/agent-card.json
+        status: 504
+      - path: /.well-known/agent.json
+        status: 504
+  - host: https://api.cisco.com
+    note: >-
+      Legacy Support APIs base host, still the apiServer value in Cisco's own
+      published Postman environment. Mashery gateway; unrouted paths return 504.
+    documents:
+      - path: /.well-known/agent-card.json
+        status: 504
+      - path: /.well-known/openid-configuration
+        status: 504
+  - host: https://developer.cisco.com
+    note: Documentation host (Cisco DevNet). Real 404s, not an SPA catch-all.
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /llms.txt
+        status: 404
+  - host: https://apiconsole.cisco.com
+    note: >-
+      Cisco API Console (Mashery portal) where applications are registered and the
+      WADL/Swagger contracts are published. Every path returns 403 to an
+      unauthenticated client.
+    documents:
+      - path: /.well-known/security.txt
+        status: 403
+      - path: /.well-known/openid-configuration
+        status: 403
+      - path: /.well-known/oauth-authorization-server
+        status: 403
+      - path: /.well-known/api-catalog
+        status: 403
+      - path: /.well-known/ai-plugin.json
+        status: 403
+      - path: /.well-known/agent-card.json
+        status: 403
+      - path: /.well-known/agent.json
+        status: 403
+  - host: https://id.cisco.com
+    note: >-
+      Cisco Common Identity SSO. The Support APIs authentication doc names
+      https://id.cisco.com/oauth2/default/v1/token as the token endpoint, so the
+      /oauth2/default authorization-server metadata is the discovery document that
+      actually governs Support APIs authentication.
+    documents:
+      - path: /oauth2/default/.well-known/openid-configuration
+        status: 200
+        type: application/json
+        file: cisco-support-apis-openid-configuration.json
+      - path: /.well-known/openid-configuration
+        status: 200
+        type: application/json
+        note: Org-level Okta metadata; the /oauth2/default document is the one the API uses.
+  - host: https://www.cisco.com
+    note: >-
+      Organization root. RFC 9116 places the canonical security.txt at the
+      registrable domain, which covers apix.cisco.com and api.cisco.com.
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        type: text/plain
+        file: cisco-support-apis-security.txt
+        note: PGP-signed; Contact psirt@cisco.com; Policy + CSAF provider metadata linked.
+      - path: /.well-known/csaf/provider-metadata.json
+        status: 200
+        type: application/json
+        note: CSAF 2.0 provider metadata (machine-readable security advisories).
+      - path: /.well-known/agent-card.json
+        status: 404
+summary:
+  probed: 30
+  documents_found: 4
+  agent_card_found: false
+  api_catalog_found: false

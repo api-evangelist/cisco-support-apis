@@ -1,0 +1,95 @@
+generated: '2026-08-19'
+method: searched
+source: >-
+  https://developer.cisco.com/docs/support-apis/api-changelog/,
+  https://developer.cisco.com/docs/support-apis/developer-support/,
+  https://status.cisco.com, and the live base paths of the eight APIs.
+description: >-
+  Versioning, deprecation, support and status posture for the Cisco Support APIs.
+  The honest summary: the APIs are versioned in the path, there is no published
+  deprecation policy, no Sunset/Deprecation header, no SLA, and the changelog page
+  is empty. Cisco does operate a public status page and staffed support channels.
+versioning:
+  scheme: path
+  mechanism: Major version as a URL path segment; no version header and no negotiation.
+  spellings_in_use: ['5', 'v1', 'v1.0', 'v2', 'v2.0', 'v3', 'v4.0']
+  current:
+    Automated Software Distribution: v4.0
+    Bug: v2.0
+    Case: v3
+    EoX: '5'
+    Product Information: v1
+    Serial Number to Information: v2
+    Service Order Return (RMA): v1.0
+    Software Suggestion: v2
+  docs: https://developer.cisco.com/docs/support-apis/api-changelog/
+  notes: >-
+    Four different version spellings across eight APIs. The published WADL filenames
+    disagree with two of the live paths (ASD WADL is v2_0 against a live /v4.0/;
+    Software Suggestion WADL is v1_0 against a live /v2/), so the downloadable
+    contracts are behind the running services.
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  notes: >-
+    No API deprecation or version-retirement policy is published anywhere in the
+    Support APIs documentation. Cisco's End-of-Life Policy
+    (https://www.cisco.com/c/en/us/products/eos-eol-policy.html) governs PRODUCTS,
+    not these APIs — which is a notable irony for an API portfolio whose flagship
+    service reports other products' end-of-life milestones. There is no announced
+    retirement date for any older version and no Sunset or Deprecation response
+    header was observed.
+deprecated_operations: []
+changelog:
+  url: https://developer.cisco.com/docs/support-apis/api-changelog/
+  status: 200
+  entry_count: 0
+  detail: changelog/cisco-support-apis-changelog.yml
+status_page:
+  url: https://status.cisco.com/
+  status: 200
+  scope: >-
+    Cisco-wide cloud service status. It is not scoped to the Support APIs or to the
+    apix.cisco.com gateway specifically, and the Support APIs documentation does not
+    link to it.
+  history: not verified
+  subscribe: not verified
+sla:
+  url: null
+  public_uptime_target: null
+  notes: >-
+    No uptime target, availability commitment or credit scheme is published for the
+    Support APIs. Availability is whatever the underlying support contract says.
+  maintenance_signal: >-
+    Documented only as an error condition — HTTP 503 "API Maintenance/Service
+    Unavailable — The service is unavailable due to maintenance." No maintenance
+    calendar is published.
+support:
+  docs: https://developer.cisco.com/docs/support-apis/developer-support/
+  technical_email: supportapis-help@cisco.com
+  smart_service_bureau_email: ask-smart-services@cisco.com
+  phone_us_canada: 1-877-330-9746
+  hours: >-
+    Smart Service Bureau 8am-5pm local business hours except holidays; email support
+    stated as 24x7.
+  forums:
+    - name: Services Discussion Forum (announcements + technical Q&A)
+      url: https://community.cisco.com/t5/custom/page/page-id/CustomFilteredByMultiLabel/page/1?board=j-blogs-dev-services&labels=Support%20APIs
+      status: 403
+    - name: Smart Net Total Care forum (onboarding and access)
+      url: https://community.cisco.com/t5/smart-net-total-care/bd-p/discussions-smart-net-total-care
+      status: 403
+  note: Both named community forums returned 403 to an anonymous client.
+roadmap:
+  url: null
+  published: false
+evidence:
+  - url: https://status.cisco.com/
+    status: 200
+  - url: https://developer.cisco.com/docs/support-apis/api-changelog/
+    status: 200
+  - url: https://developer.cisco.com/docs/support-apis/developer-support/
+    status: 200

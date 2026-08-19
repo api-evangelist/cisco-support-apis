@@ -1,0 +1,65 @@
+generated: '2026-08-19'
+method: searched
+source: >-
+  https://developer.cisco.com/docs/support-apis/ (no SDK page exists), plus direct
+  queries against registry.npmjs.org, pypi.org/pypi/<pkg>/json and the CiscoDevNet
+  GitHub organization.
+description: >-
+  Cisco ships NO first-party client library for the Support APIs in any language.
+  The Support APIs documentation has no SDK section and links no client code; the
+  only first-party developer artifact Cisco publishes on GitHub for these APIs is a
+  Postman collection (CiscoDevNet/Cisco_Support_API_Postman, BSD-3-Clause, last
+  pushed 2020-08-07). The two Python libraries below are community projects by
+  individual authors and are recorded as unofficial. npm, Maven Central, NuGet,
+  pkg.go.dev, RubyGems, Packagist and crates.io returned no Cisco Support APIs
+  client at all.
+official_sdk_count: 0
+community_sdk_count: 2
+packages:
+  - language: python
+    registry: pypi
+    name: ciscosupportsdk
+    url: https://pypi.org/project/ciscosupportsdk/
+    source: https://github.com/supermanny81/ciscosupportapi
+    install: pip install ciscosupportsdk
+    official: false
+    author: Manny Garcia (individual, MIT)
+    version: 0.2.2
+    published: '2026-07-24'
+    registry_status: 200
+    note: >-
+      Community SDK. Most recently published of the two, and the only Support APIs
+      client library with a release inside the last year.
+  - language: python
+    registry: pypi
+    name: cisco-support
+    url: https://pypi.org/project/cisco-support/
+    source: https://github.com/rothdennis/cisco_support
+    install: pip install cisco-support
+    official: false
+    author: Dennis Roth (individual, MIT)
+    version: 0.5.2
+    published: '2024-02-22'
+    registry_status: 200
+    note: Community SDK. No release in over two years as of this pass.
+first_party_artifacts:
+  - kind: postman-collection
+    name: Support APIs - DevNet
+    repo: https://github.com/CiscoDevNet/Cisco_Support_API_Postman
+    license: BSD-3-Clause
+    last_pushed: '2020-08-07'
+    saved: postman/cisco-support-apis-postman-collection.json
+    official: true
+    note: >-
+      The only first-party, publicly downloadable, machine-readable description of
+      the Support APIs. 33 requests across seven of the eight APIs (Automated
+      Software Distribution is absent). Six years stale: its environment still
+      points at api.cisco.com and the retired cloudsso.cisco.com token endpoint.
+registries_checked:
+  - {registry: npm, query: cisco-support-apis, result: 404}
+  - {registry: npm, query: '@cisco/support-apis', result: 404}
+  - {registry: pypi, query: ciscosupportsdk, result: 200}
+  - {registry: pypi, query: cisco-support, result: 200}
+  - {registry: pypi, query: cisco-support-api, result: 404}
+  - {registry: pypi, query: ciscosupportapi, result: 404}
+  - {registry: github, query: 'CiscoDevNet org, "support"', result: 'only Cisco_Support_API_Postman'}

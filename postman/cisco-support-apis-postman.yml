@@ -1,0 +1,46 @@
+generated: '2026-08-19'
+method: searched
+source: https://github.com/CiscoDevNet/Cisco_Support_API_Postman
+description: >-
+  Cisco's own Postman collection for the Support APIs, published by the CiscoDevNet
+  GitHub organization under BSD-3-Clause and saved here verbatim. It is the only
+  first-party, anonymously downloadable, machine-readable description of these APIs —
+  the WADL and Swagger files are behind the API Console sign-in. It is also six years
+  stale, and the staleness is load-bearing: the environment still targets the legacy
+  api.cisco.com host and the retired cloudsso.cisco.com/as/token.oauth2 endpoint,
+  neither of which matches the current documentation.
+collection:
+  name: Support APIs - DevNet
+  schema: https://schema.getpostman.com/json/collection/v2.1.0/collection.json
+  file: cisco-support-apis-postman-collection.json
+  environment_file: cisco-support-apis-postman-environment.json
+  repo: https://github.com/CiscoDevNet/Cisco_Support_API_Postman
+  license: BSD-3-Clause
+  last_pushed: '2020-08-07'
+  request_count: 33
+  folders:
+    - {name: Bug v2, requests: 8}
+    - {name: Case v3, requests: 4}
+    - {name: EoX v5, requests: 4}
+    - {name: ProdInfo v1, requests: 3}
+    - {name: SN2Info V2, requests: 5}
+    - {name: Software Suggestion v2, requests: 6}
+    - {name: SVO RMA v1, requests: 2}
+    - {name: Token Request, requests: 1}
+  coverage:
+    apis_covered: 7
+    apis_total: 8
+    missing: [Automated Software Distribution]
+drift:
+  - field: environment.apiServer
+    collection_value: api.cisco.com
+    current_documented_value: apix.cisco.com
+  - field: environment.authServer + token path
+    collection_value: cloudsso.cisco.com/as/token.oauth2
+    current_documented_value: https://id.cisco.com/oauth2/default/v1/token
+    note: cloudsso.cisco.com/.well-known/openid-configuration returns 404.
+evidence:
+  - url: https://github.com/CiscoDevNet/Cisco_Support_API_Postman
+    status: 200
+  - url: https://raw.githubusercontent.com/CiscoDevNet/Cisco_Support_API_Postman/master/Support%20APIs%20-%20DevNet.postman_collection.json
+    status: 200

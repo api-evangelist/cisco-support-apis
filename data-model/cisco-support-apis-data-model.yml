@@ -1,0 +1,158 @@
+generated: '2026-08-19'
+method: searched
+source: >-
+  The "Request and Response Parameters" and per-operation parameter tables on the
+  eight Cisco Support API reference pages at https://developer.cisco.com/docs/support-apis/.
+  Derived from the documentation rather than from a contract, because the WADL/Swagger
+  files that would carry the schemas are credential-gated (see
+  contracts/cisco-support-apis-published-contracts.yml).
+description: >-
+  The identifier graph that binds the eight Support APIs together. There is no shared
+  schema and no shared envelope across the portfolio — what actually joins these APIs
+  is a small set of Cisco identifiers that flow from one to the next. Understanding
+  that graph is the difference between eight unrelated endpoints and one estate-
+  reconciliation workflow, and it is not drawn anywhere in Cisco's own documentation.
+identifiers:
+  - id: serial_number
+    label: Device serial number
+    example_format: FOC10220LK9
+    description: The identifier physically printed on a Cisco device. The entry point for almost every workflow.
+    accepted_by: [Serial Number to Information, Product Information, EoX]
+    batch_limit: 20 (EoX); comma-separated in the path elsewhere
+  - id: product_id
+    label: Product ID (PID) / base PID
+    example_format: WS-C2960-8TC-S
+    description: Orderable product identifier. The join key between hardware identity and lifecycle, defect and software data.
+    accepted_by: [EoX, Product Information, Bug, Software Suggestion]
+    produced_by: [Serial Number to Information (/identifiers/orderable/), Product Information]
+    batch_limit: 20 (EoX), 10 (Software Suggestion), 1 (Software Suggestion /compatible/)
+  - id: mdf_id
+    label: MDF ID
+    example_format: '283933147'
+    description: Cisco's numeric product-hierarchy identifier. Some Software Suggestion operations only accept this form.
+    accepted_by: [Software Suggestion, Automated Software Distribution]
+    produced_by: [Product Information (/information/product_ids_mdf/)]
+    batch_limit: 10
+  - id: instance_number
+    label: Instance number
+    example_format: '917280220'
+    description: Contract instance identifier; an alternative coverage lookup key.
+    accepted_by: [Serial Number to Information]
+  - id: contract_id
+    label: Service contract ID
+    description: Support contract identifier; used to pull the case load for a contract.
+    accepted_by: [Case]
+    produced_by: [Serial Number to Information (coverage summary)]
+    batch_limit: 1
+  - id: cco_user_id
+    label: Cisco.com user ID
+    description: The Cisco.com identity a case or RMA was raised under.
+    accepted_by: [Case, Service Order Return (RMA)]
+    batch_limit: 10 (Case), 1 (RMA)
+  - id: software_release
+    label: Software release string
+    example_format: 12.2(44)SE6
+    description: Release version; combined with an OS type (IOS) for EoX lookups.
+    accepted_by: [EoX, Bug, Software Suggestion, Automated Software Distribution]
+    batch_limit: 20 (EoX)
+  - id: image_guid
+    label: Software image GUID
+    description: Globally unique identifier for a software image; required to request a download URL.
+    accepted_by: [Automated Software Distribution]
+    produced_by: [Automated Software Distribution (/metadata/ operations)]
+    batch_limit: 5
+  - id: bug_id
+    label: Cisco bug ID
+    example_format: CSCtb58779
+    accepted_by: [Bug]
+  - id: case_id
+    label: TAC case ID
+    example_format: '682299374'
+    accepted_by: [Case]
+  - id: rma_number
+    label: RMA number
+    example_format: '84894022'
+    accepted_by: [Service Order Return (RMA)]
+relationships:
+  - from: serial_number
+    to: product_id
+    via: 'GET /sn2info/v2/identifiers/orderable/serial_numbers/{sr_no}'
+    kind: translates_to
+  - from: serial_number
+    to: coverage
+    via: 'GET /sn2info/v2/coverage/summary/serial_numbers/{sr_no}'
+    kind: has_one
+  - from: serial_number
+    to: eox_record
+    via: 'GET /supporttools/eox/rest/5/EOXBySerialNumber/{pageIndex}/{serialNumber}'
+    kind: has_one
+  - from: product_id
+    to: mdf_id
+    via: 'GET /product/v1/information/product_ids_mdf/{pid}'
+    kind: translates_to
+  - from: product_id
+    to: bug
+    via: 'GET /bug/v2.0/bugs/products/product_id/{pid}'
+    kind: has_many
+  - from: product_id
+    to: software_suggestion
+    via: 'GET /software/suggestion/v2/suggestions/software/productIds/{productIds}'
+    kind: has_many
+  - from: mdf_id
+    to: software_image
+    via: 'POST /software/v4.0/metadata/pidimage'
+    kind: has_many
+  - from: image_guid
+    to: download_url
+    via: 'POST /software/v4.0/download/pidimage'
+    kind: has_one
+  - from: contract_id
+    to: case
+    via: 'GET /case/v3/cases/contracts/contract_ids/{contract_id}'
+    kind: has_many
+  - from: cco_user_id
+    to: case
+    via: 'GET /case/v3/cases/users/user_ids/{user_ids}'
+    kind: has_many
+  - from: cco_user_id
+    to: rma
+    via: 'GET /return/v1.0/returns/users/user_ids/{user_id}'
+    kind: has_many
+named_types:
+  note: Types Cisco names explicitly in the reference pages. Only EoX and Software Suggestion document their response types by name.
+  eox:
+    - PaginationRequestRecordType
+    - SWReleaseStringType
+    - PaginationResponseRecordType
+    - EOXRecordType
+    - EOXErrorType
+    - EOXMigrationDetailsType
+  software_suggestion:
+    - PaginationResponseRecordType
+    - ErrorDetailsType
+    - SuggestionType
+    - ImagesType
+    - ProductType
+    - ProductListType
+  other_six:
+    - null
+    - >-
+      Bug, Case, Product Information, Serial Number to Information, Service Order
+      Return and Automated Software Distribution document flat request/response
+      parameter tables with no named types, so their objects cannot be referenced or
+      reused by name.
+canonical_workflow:
+  name: Reconcile an installed base against Cisco support status
+  steps:
+    - Collect serial numbers from the estate.
+    - 'SN2INFO: coverage summary -> contract IDs, coverage dates, warranty.'
+    - 'SN2INFO: orderable identifiers -> product IDs.'
+    - 'EoX by product ID (or by serial number) -> end-of-life milestones.'
+    - 'Software Suggestion by product ID -> the release Cisco recommends.'
+    - 'Bug by product ID + current release -> known defects in what is running today.'
+    - 'ASD metadata + download -> the image, its checksum and a signed download URL.'
+    - 'Case by contract ID -> the open TAC cases against that contract.'
+  note: >-
+    Every step crosses an API boundary with a different pagination parameter name, a
+    different error shape and a different version spelling. That friction is the
+    portfolio's defining integration cost.

@@ -1,0 +1,95 @@
+generated: '2026-08-19'
+method: probed
+source: https://developer.cisco.com/docs/support-apis/cisco-support-apis-wadl-files/
+description: >-
+  Cisco DOES publish a machine-readable contract for every one of the eight Support
+  APIs — a WADL file per API, linked from a "Downloads" page in the public
+  documentation — plus a Swagger YAML for Automated Software Distribution v4.0
+  referenced in that API's reference page. None of them is anonymously fetchable:
+  every link resolves to apiconsole.cisco.com (Cisco's Mashery portal), which
+  answers HTTP 403 with "You do not have permission to view this page. Please Sign
+  In or Register" to an unauthenticated client. The contract exists and is
+  published; the wall is on the download, not on the documentation. This artifact
+  records that distinction so the profile is not read as "Cisco has no spec".
+  API Evangelist has NOT authored a substitute contract.
+finding: contract-published-but-credential-gated
+contract_format: WADL 1.0 (Web Application Description Language) + one Swagger YAML
+anonymous_fetch: false
+gate:
+  host: apiconsole.cisco.com
+  kind: portal-sign-in
+  observed_status: 403
+  observed_body: >-
+    "Cisco API Console — Sign In — You do not have permission to view this page.
+    Please Sign In or Register."
+  server_header: Mashery Proxy
+  who_can_pass: >-
+    A Cisco.com account that has been granted Support API access by a Smart Net
+    Total Care (SNTC) Delegated Administrator, or a Cisco Partner Support Service
+    (PSS) partner account onboarded through the Smart Service Bureau.
+documents:
+  - api: Automated Software Distribution
+    version: v2.0 (per the download filename)
+    url: https://apiconsole.cisco.com/files/Cisco-Automated-Software-Distribution-API-v2_0.wadl
+    status: 403
+  - api: Bug
+    version: v2.0
+    url: https://apiconsole.cisco.com/files/Cisco-BUG-API-v2_0.wadl
+    status: 403
+  - api: Case
+    version: v3
+    url: https://apiconsole.cisco.com/files/Cisco_Case_API_v3.wadl
+    status: 403
+  - api: EoX
+    version: v5.0
+    url: https://apiconsole.cisco.com/files/Cisco-End-of-Life-EOX-v5_0.wadl
+    status: 403
+  - api: Product Information
+    version: v1.0
+    url: https://apiconsole.cisco.com/files/Cisco-ProductInfo-API-v1_0.wadl
+    status: 403
+  - api: Serial Number to Information
+    version: v2
+    url: https://apiconsole.cisco.com/files/SN2INFO_v2.wadl
+    status: 403
+  - api: Service Order Return (RMA)
+    version: v1.0
+    url: https://apiconsole.cisco.com/files/Cisco-Return-API-v1_0-Service-Order-Return.wadl
+    status: 403
+  - api: Software Suggestion
+    version: v1.0
+    url: https://apiconsole.cisco.com/files/Cisco-Software-Suggestion-API-v1_0.wadl
+    status: 403
+additional_claims:
+  - api: Automated Software Distribution
+    claim: >-
+      "The Swagger YAML for the Cisco Automated Software Distribution API v4.0 is
+      available for download from the Cisco API Console."
+    source: https://developer.cisco.com/docs/support-apis/automated-software-distribution/
+    anonymous_url: null
+    note: >-
+      No anonymous URL is given for the Swagger YAML; it is only reachable from
+      inside the signed-in API Console. This is the only OpenAPI/Swagger artifact
+      Cisco names anywhere in the Support APIs documentation.
+staleness_signals:
+  - signal: WADL filename versions disagree with the live paths
+    detail: >-
+      The published ASD WADL is named v2_0 while the documented and live base path
+      is /software/v4.0/. The Software Suggestion WADL is named v1_0 while the
+      documented and live base path is /software/suggestion/v2/.
+  - signal: The public API Changelog page has zero entries
+    detail: >-
+      https://developer.cisco.com/docs/support-apis/api-changelog/ lists all eight
+      APIs with a single heading each reading "(changelog begins)" and no dated
+      entries, so a consumer cannot tell what changed or when.
+what_would_fix_it:
+  - Publish the WADL (or better, an OpenAPI 3.x conversion) at an anonymous URL on developer.cisco.com.
+  - Gate the credentials, not the contract — an integrator cannot evaluate what they cannot read.
+  - Publish the ASD v4.0 Swagger YAML at a stable public URL and link it from the API reference.
+evidence:
+  - url: https://developer.cisco.com/docs/support-apis/cisco-support-apis-wadl-files/
+    status: 200
+  - url: https://apiconsole.cisco.com/files/SN2INFO_v2.wadl
+    status: 403
+  - url: https://apiconsole.cisco.com/files/Cisco-End-of-Life-EOX-v5_0.wadl
+    status: 403

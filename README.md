@@ -50,7 +50,42 @@ Part of the Cisco family.
 
 ## Contract status
 
-No anonymously fetchable machine-readable contract was found on 2026-08-19 (probed; real 404s). API Evangelist has not authored a substitute.
+**Published, but credential-gated.** Cisco does publish a machine-readable contract for every one of
+the eight Support APIs — a WADL 1.0 file per API, linked from the public
+[Downloads](https://developer.cisco.com/docs/support-apis/cisco-support-apis-wadl-files/) page, plus a
+Swagger YAML for Automated Software Distribution v4.0 named in that API's reference. None of them is
+anonymously fetchable: every link resolves to `apiconsole.cisco.com` and returns **HTTP 403** with
+"Please Sign In or Register" (probed 2026-08-19). No OpenAPI is published at any public URL.
+
+The one first-party machine-readable artifact a member of the public can download is Cisco's own
+Postman collection, [CiscoDevNet/Cisco_Support_API_Postman](https://github.com/CiscoDevNet/Cisco_Support_API_Postman)
+(BSD-3-Clause, last updated 2020-08-07), saved verbatim under `postman/`. It covers seven of the eight
+APIs and still points at the retired `api.cisco.com` host and `cloudsso.cisco.com` token endpoint.
+
+**API Evangelist has not authored a substitute contract.** Everything in this repository is either a
+document fetched from Cisco verbatim, a probe result with its HTTP status recorded, or a derivation
+from Cisco's own published reference pages. See `contracts/cisco-support-apis-published-contracts.yml`.
+
+## What is here
+
+| Artifact | What it records |
+|---|---|
+| `contracts/` | The eight published-but-403 WADL URLs and the ASD Swagger claim |
+| `postman/` | Cisco's own Postman collection + environment, verbatim |
+| `well-known/` | 30 probes across 6 hosts; `security.txt` and the OIDC discovery document saved verbatim |
+| `authentication/` | OAuth 2.0 client-credentials profile, token endpoint, entitlement gate |
+| `errors/` | 205 documented error codes across all eight APIs |
+| `conventions/` | Pagination, batching, versioning and error semantics — and how inconsistent they are |
+| `rate-limits/` | Enforcement is documented; the numbers are not published |
+| `plans/` | No pricing, no tiers, no self-serve — access is an SNTC/PSS contract entitlement |
+| `lifecycle/` | No deprecation policy, no Sunset headers, no SLA |
+| `changelog/` | The published changelog page has zero entries |
+| `packages/` | No first-party SDK in any language; two community Python libraries |
+| `data-model/` | The identifier graph that joins the eight APIs |
+| `mcp/` | No MCP server exists — a candidate tool list only, deliberately unwired |
+| `conformance/` | 22 standards assessed against observed evidence |
+
+No A2A agent card, MCP server, webhook/AsyncAPI surface, GraphQL, CLI, or agent skills were found.
 
 ## Verified links
 

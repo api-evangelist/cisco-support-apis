@@ -1,0 +1,36 @@
+generated: '2026-08-19'
+method: probed
+source: https://trustportal.cisco.com/c/r/ctp/trust-portal.html
+description: >-
+  Cisco operates a corporate Trust Portal and Trust Center. Neither is scoped to the
+  Support APIs, and neither names a certification an anonymous client can read: the
+  Trust Portal answers 200 with a 2.9 KB JavaScript shell containing no document
+  list, and the Trust Center compliance page mentions FedRAMP and HIPAA only in
+  navigation copy about Cisco SaaS solutions generally. Recorded as probed, with the
+  wall named — no certification is claimed for these APIs on this evidence.
+trust_center:
+  url: https://trustportal.cisco.com/c/r/ctp/trust-portal.html
+  status: 200
+  machine_readable: false
+  note: >-
+    Client-side rendered. The served HTML is a 2,881-byte shell whose only text is
+    the page title; the document catalogue only exists after script execution.
+  scoped_to_this_product: false
+related:
+  - url: https://www.cisco.com/c/en/us/about/trust-center.html
+    status: 200
+    note: Corporate Trust Center landing page.
+  - url: https://www.cisco.com/c/en/us/about/trust-center/compliance.html
+    status: 200
+    note: >-
+      Names FedRAMP and HIPAA in navigation copy about "certified Cisco solutions";
+      does not enumerate certifications and does not mention the Support APIs.
+  - url: https://www.cisco.com/.well-known/csaf/provider-metadata.json
+    status: 200
+    note: >-
+      CSAF 2.0 provider metadata — Cisco DOES publish machine-readable security
+      advisories at the organization level. This is the strongest machine-readable
+      trust signal found, and it is a product-security surface rather than a
+      compliance attestation surface.
+certifications: []
+certifications_readable_anonymously: false

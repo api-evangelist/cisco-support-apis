@@ -1,0 +1,131 @@
+generated: '2026-08-19'
+method: searched
+source: >-
+  https://developer.cisco.com/docs/support-apis/ — the cross-cutting request and
+  response semantics shared by all eight Support APIs, read from Cisco's own
+  reference pages (authentication, per-API request/response parameter tables and
+  error tables) and cross-checked against live unauthenticated probes of
+  apix.cisco.com.
+description: >-
+  How the Cisco Support APIs behave across every operation: authentication style,
+  idempotency, pagination, response encoding, error envelope, rate-limit signalling
+  and versioning. These are the runtime conventions a WADL/OpenAPI does not express,
+  and on this portfolio they are notably inconsistent from one API to the next —
+  which is the single most useful thing to know before integrating.
+base_urls:
+  - https://apix.cisco.com
+  - https://api.cisco.com
+api_style: REST over HTTPS; JSON responses (EoX also emits XML on request); GET everywhere except Automated Software Distribution, which is POST-only.
+authentication:
+  scheme: OAuth 2.0 client credentials bearer token
+  header: 'Authorization: Bearer <access_token>'
+  token_endpoint: https://id.cisco.com/oauth2/default/v1/token
+  token_lifetime_seconds: 3599
+  scopes: None documented; API access is bound to the registered application, not to the token.
+  docs: https://developer.cisco.com/docs/support-apis/authentication/
+  detail: authentication/cisco-support-apis-authentication.yml
+idempotency:
+  supported: false
+  mechanism: null
+  detail: >-
+    No idempotency key, request-token or replay mechanism is documented anywhere in
+    the Support APIs documentation. Seven of the eight APIs are read-only GETs, which
+    are inherently idempotent. The exception is Automated Software Distribution,
+    which is entirely POST — including POST /software/v4.0/compliance/k9 and POST
+    /software/v4.0/compliance/eula, which electronically sign agreements, and POST
+    /software/v4.0/download/pidimage, which issues download URLs. Those are
+    state-changing POSTs with no documented idempotency guarantee, so a retried
+    request after a timeout has undefined behaviour.
+  docs: null
+pagination:
+  style: page-number
+  consistency: inconsistent across the portfolio
+  variants:
+    - apis: [Bug, Case, Product Information, Serial Number to Information]
+      param: page_index
+      note: 1-based page index passed as a query parameter.
+    - apis: [Software Suggestion, Service Order Return (RMA), Automated Software Distribution]
+      param: pageIndex
+      note: Same concept, camelCase spelling. ASD additionally accepts perpage.
+    - apis: [EoX]
+      param: '{pageIndex}'
+      note: Page index is a PATH segment, not a query parameter (e.g. /EOXByProductID/1/WIC-1T=).
+  page_sizes:
+    Product Information: 500 records per page
+    Bug: 'not stated'
+    Case: 100 records per page
+    Automated Software Distribution: 25 records per page (perpage max 25)
+  response_fields:
+    - PaginationResponseRecordType (EoX, Software Suggestion) — carries the last index / total records
+  note: >-
+    There is no cursor, no Link header and no next-page URL. A client must know the
+    parameter name for the specific API it is calling and stop by comparing the page
+    index against the returned last index.
+input_batching:
+  style: comma-separated values in the path segment
+  detail: >-
+    Most read operations accept a batch inline in the URL, e.g.
+    /sn2info/v2/coverage/summary/serial_numbers/{sr_no,sr_no,sr_no}. Batch ceilings
+    are enforced and differ per API — 20 serial numbers / product IDs / software
+    release strings for EoX, 10 PIDs or MDF IDs for Software Suggestion, 5 image
+    GUIDs for ASD download, 10 user IDs / 5 bill-to IDs for Case. Exceeding a ceiling
+    is an error, not a truncation.
+content_negotiation:
+  default: application/json
+  mechanism: >-
+    Not the Accept header. EoX takes ?responseencoding=json|xml and Software
+    Suggestion takes ?contentType=json (and rejects anything else with
+    S3_INV_QUERY_PARAM). The remaining APIs are JSON-only.
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: false
+request_tracing:
+  request_id_header: X-Mashery-Message-ID
+  observed: true
+  detail: >-
+    Observed on live unauthenticated 403 responses from apix.cisco.com, e.g.
+    X-Mashery-Message-ID: 1ba2e4af-a4b3-4f55-95cc-d45d0014b612. It is emitted by the
+    gateway and is not documented in the Support APIs documentation, so a consumer
+    is not told to capture it for support cases.
+versioning:
+  scheme: path
+  mechanism: The major version is a path segment, and the spelling is not consistent.
+  observed:
+    - /supporttools/eox/rest/5/       # EoX — bare digit, no "v"
+    - /sn2info/v2/
+    - /product/v1/
+    - /bug/v2.0/
+    - /case/v3/
+    - /software/v4.0/                 # Automated Software Distribution
+    - /software/suggestion/v2/
+    - /return/v1.0/
+  note: >-
+    Four different version spellings appear across eight APIs (5, v1, v2, v3, v1.0,
+    v2.0, v4.0). No version header, no version negotiation, no documented policy for
+    how long an old version stays up.
+  detail: lifecycle/cisco-support-apis-lifecycle.yml
+error_envelope:
+  format: proprietary
+  rfc9457: false
+  detail: errors/cisco-support-apis-problem-types.yml
+  summary: >-
+    No shared error schema. Validation failures are commonly returned as HTTP 403 and
+    "no records" conditions as HTTP 200, so status code alone is not a reliable
+    outcome signal.
+rate_limit_signalling:
+  headers_documented: []
+  status_on_exhaustion: 403
+  codes: [ERR_403_DEVELOPER_OVER_QPS, ERR_403_DEVELOPER_OVER_RATE, 'Account Over Rate Limit', 'Rate Limit Exceeded']
+  retry_after: false
+  detail: rate-limits/cisco-support-apis-rate-limits.yml
+  summary: >-
+    No X-RateLimit-* / RateLimit-* headers and no Retry-After are documented or
+    observed. A client only learns it is throttled from a 403 body, and the numeric
+    ceilings are not published — they are visible only in the per-application usage
+    report inside the Cisco API Console.
+webhooks:
+  supported: false
+  detail: No callback, webhook, event or streaming surface is documented for any of the eight APIs.

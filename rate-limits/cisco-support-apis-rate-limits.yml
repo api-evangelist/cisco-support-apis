@@ -1,0 +1,91 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+provider: Cisco Support APIs
+providerId: cisco-support-apis
+generated: '2026-08-19'
+created: '2026-08-19'
+modified: '2026-08-19'
+method: searched
+source: >-
+  https://developer.cisco.com/docs/support-apis/software-suggestion/ and the
+  "Error Codes" section of every other Support API reference page; runtime headers
+  observed on live unauthenticated requests to apix.cisco.com and api.cisco.com.
+description: >-
+  Cisco enforces rate limits on the Support APIs at the Mashery gateway, per
+  registered application key, on two windows: a queries-per-second ceiling and a
+  longer rate-limiting period that the Software Suggestion reference names as one
+  day. Cisco does NOT publish the numeric value of either ceiling anywhere in the
+  public documentation — an application only sees its own limit and usage in the
+  "Keys" view of the Cisco API Console after sign-in. So the enforcement is
+  documented and the numbers are not.
+limit_count: 0
+numbers_published: false
+enforcement_documented: true
+scope: per registered application (API key / client_id), across all Support APIs the app is entitled to
+windows:
+  - name: Queries per second
+    metric: requests_per_second
+    timeFrame: second
+    limit: null
+    note: >-
+      Documented only by its violation code. "Account Over Queries Per Second Limit"
+      / ERR_403_DEVELOPER_OVER_QPS — "The API key you are using has attempted to
+      access the API too many times in one second."
+  - name: Rate limiting period
+    metric: requests_per_period
+    timeFrame: day
+    limit: null
+    note: >-
+      "ERR_403_DEVELOPER_OVER_RATE — The API key you are using has attempted to
+      access the API too many times in the rate limiting period (1 day)." The
+      one-day window is stated only on the Software Suggestion page; the other seven
+      references say "in the rate limiting period" without naming it.
+  - name: Service capacity
+    metric: shared_capacity
+    timeFrame: null
+    limit: null
+    note: '"Rate Limit Exceeded — The service you have requested is over capacity." A shared-capacity shed, not a per-key ceiling.'
+response:
+  status_on_exhaustion: 403
+  status_429_used: false
+  retry_after_header: false
+  headers_returned:
+    - name: X-Mashery-Error-Code
+      observed: true
+      example: ERR_403_NOT_AUTHORIZED
+      note: Observed live on unauthenticated requests; carries the gateway error token, including the over-QPS/over-rate tokens.
+    - name: X-Mashery-Message-ID
+      observed: true
+      example: 1ba2e4af-a4b3-4f55-95cc-d45d0014b612
+      note: Per-request correlation id emitted by the gateway.
+    - name: Server
+      observed: true
+      example: Mashery Proxy
+  ratelimit_headers: []
+  note: >-
+    No X-RateLimit-Limit / X-RateLimit-Remaining / X-RateLimit-Reset, no RFC 9239
+    RateLimit-* headers, and no Retry-After. There is no runtime budget signal at
+    all: a client cannot tell how close it is to the ceiling until it is over it,
+    and cannot tell how long to wait. This is the sharpest agent-readiness gap in
+    the portfolio, because the standard 429 + Retry-After backoff path never fires.
+input_batch_ceilings:
+  note: Separate from rate limiting — per-request input caps enforced per API.
+  ceilings:
+    EoX: 20 product IDs, 20 serial numbers or 20 software release strings per request
+    Software Suggestion: 10 PIDs or 10 MDF IDs per request (1 for the /compatible/ operations); 10 feature names
+    Automated Software Distribution: 5 image GUIDs per download request; 1 PID per metadata request
+    Case: 10 user IDs, 5 bill-to customer IDs, 1 contract ID per request
+observed:
+  - url: https://apix.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/WIC-1T=
+    status: 403
+    headers: {X-Mashery-Error-Code: ERR_403_NOT_AUTHORIZED, Server: Mashery Proxy}
+  - url: https://api.cisco.com/sn2info/v2/coverage/status/serial_numbers/FOC10220LK9
+    status: 403
+    headers: {X-Mashery-Error-Code: ERR_403_DEVELOPER_INACTIVE, Server: Mashery Proxy}
+where_the_numbers_live:
+  url: https://apiconsole.cisco.com/
+  status: 403
+  note: >-
+    "From the Keys selector, you can view API usage and request quota reports" —
+    Cisco's application-registration documentation. Sign-in required; the console
+    returns 403 to an anonymous client.

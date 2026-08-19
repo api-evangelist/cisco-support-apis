@@ -1,0 +1,765 @@
+generated: '2026-08-19'
+method: searched
+format: proprietary
+source: The "Error Codes" section of each of the eight Cisco Support API reference pages on developer.cisco.com
+  (see per-API docs URLs below).
+description: 'Error catalogue for the eight Cisco Support APIs, transcribed from Cisco''s own published
+  error tables. The Support APIs do NOT use RFC 9457 application/problem+json. Two distinct error layers
+  are in play: the Mashery gateway layer (HTTP status + X-Mashery-Error-Code response header, observed
+  live) and an application layer whose codes are returned inside the JSON body, frequently with an HTTP
+  status that does not match the semantics.'
+envelope:
+  media_type: application/json (EoX also supports application/xml via ?responseencoding=xml)
+  gateway_layer:
+    signal: HTTP status + X-Mashery-Error-Code response header
+    observed:
+    - url: https://apix.cisco.com/sn2info/v2/coverage/status/serial_numbers/FOC10220LK9
+      status: 403
+      x_mashery_error_code: ERR_403_NOT_AUTHORIZED
+    - url: https://api.cisco.com/sn2info/v2/coverage/status/serial_numbers/FOC10220LK9
+      status: 403
+      x_mashery_error_code: ERR_403_DEVELOPER_INACTIVE
+  application_layer:
+    signal: 'A code/message pair inside the JSON response body (field name varies by API: ErrorResponse,
+      ErrorDetailsType, EOXError, error_response).'
+    note: There is no single shared error schema across the eight APIs.
+agent_semantics_warnings:
+- issue: Client errors returned as HTTP 403
+  detail: The Bug API documents API_MISSING_PARAMETERS, API_INVALID_INPUT and EXCEEDED_INPUTS at HTTP
+    403, and the Case API returns every validation error (INVALID_DATEFORMAT, INVALID_SORT_OPTION, MISSING_INPUTS,
+    ...) at 403. An agent cannot distinguish "your credentials are wrong, stop retrying" from "your date
+    format is wrong, fix and retry" by status code alone; it must parse the body code.
+- issue: Errors returned as HTTP 200
+  detail: Bug, Serial Number to Information and Automated Software Distribution document NO_RECORDS_FOUND,
+    API_INVALID_INPUT, EXCEEDED_OUTPUT and a family of contract/entitlement tokens (CONTRACT_NOT_AUTH,
+    IMG_K9, CONTRACT_LOGIN, ...) at HTTP 200. A 200 is not a success signal on these APIs.
+- issue: Rate limiting returned as HTTP 403, not 429
+  detail: Every API documents ERR_403_DEVELOPER_OVER_QPS and ERR_403_DEVELOPER_OVER_RATE / "Account Over
+    Rate Limit" at HTTP 403. No 429 and no Retry-After are documented, so standard client backoff on 429
+    will never fire.
+- issue: Non-standard HTTP status 596
+  detail: The gateway returns 596 "Service Not Found" — a Mashery-specific code outside the IANA registry
+    — and the docs note it usually means whitespace in the input parameters.
+- issue: Inconsistent codes for the same condition across APIs
+  detail: The same authorization failure is API_NOTAUTHORIZED (Bug, SN2INFO), CASE_API_FORBIDDEN (Case),
+    SSA_ERR_034/SSA_ERR_036 (EoX) and ERR_403_NOT_AUTHORIZED (Software Suggestion, gateway).
+apis:
+- api: Automated Software Distribution
+  docs: https://developer.cisco.com/docs/support-apis/automated-software-distribution/
+  error_count: 89
+  errors:
+  - status: 400
+    code: Bad Request
+    message: Request does not conform to HTTP protocol.
+  - status: 403
+    code: Not Authorized
+    message: Token is invalid.
+  - status: 403
+    code: Forbidden
+    message: You do not have permission to access the requested method or object.
+  - status: 403
+    code: Not Authorized
+    message: The API key associated with your request was not recognized, or the signature was incorrect.
+  - status: 403
+    code: Account Inactive
+    message: The API key you are using to access the Mashery API has not been approved or has been disabled.
+  - status: 403
+    code: Account Over Queries Per Second Limit
+    message: The API key you are using has attempted to access the API too many times in one second.
+  - status: 403
+    code: Account Over Rate Limit
+    message: The API key you are using has attempted to access the API too many times in the rate limiting
+      period.
+  - status: 403
+    code: Rate Limit Exceeded
+    message: The service you have requested is over capacity.
+  - status: 403
+    code: Unknown Referrer
+    message: Unknown referrer.
+  - status: 403
+    code: Service requires SSL
+    message: The service requires SSL.
+  - status: 404
+    code: API_UNAVAILABLE
+    message: Service is not configured in JVM.
+  - status: 414
+    code: Request URI Too Long
+    message: The request URI is too long.
+  - status: 415
+    code: INVALID_MEDIATYPE
+    message: Unsupported media type input by the user.
+  - status: 500
+    code: API_UNAVAILABLE
+    message: Database is down or currently unavailable.
+  - status: 500
+    code: UNKNOWN_FAILURE
+    message: Generic error.
+  - status: 500
+    code: SYSTEM_ERROR
+    message: Error while request data transformation to JSON.
+  - status: 500
+    code: SYSTEM_ERROR
+    message: SQL exception while invoking backend procedure.
+  - status: 500
+    code: SYSTEM_ERROR
+    message: Error while writing the data to HTTP response.
+  - status: 500
+    code: Internal Server Error
+    message: An internal server error has occurred (usually from the API).
+  - status: 502
+    code: Bad Gateway
+    message: Bad response from the server was received on the backend.
+  - status: 502
+    code: Proxy Error
+    message: An error from the server was received on the backend
+  - status: 503
+    code: API Maintenance/Service Unavailable
+    message: The service is unavailable due to maintenance.
+  - status: 504
+    code: Gateway Timeout
+    message: The backend service timed out.
+  - status: 596
+    code: Service Not Found
+    message: 'The service requested does not exist or is unavailable.Note: Most likey spaces were found
+      in the input parameters. Please check the input values.'
+  - status: 400
+    code: UDI_INVALID
+    message: udi provided in the request is invalid. Please invoke the service with the valid udi.
+  - status: 400
+    code: PID_INVALID
+    message: pid provided in the request is invalid. Please invoke the service with the valid pid.
+  - status: 400
+    code: MDFID_INVALID
+    message: mdfId provided in the request is invalid. Please invoke the service with the valid mdfId.
+  - status: 400
+    code: IMG_NM_INVALID
+    message: imageName provided is invalid. Please provide the valid imageName.
+  - status: 400
+    code: SWTID_INVALID
+    message: softwareTypeId provided is invalid. Please provide a valid softwareTypeId.
+  - status: 400
+    code: OP_INVALID
+    message: operating_platform provided is invalid. Please provide a valid operating_platform.
+  - status: 400
+    code: INVALID_INPUT
+    message: Invalid input or No data found for the input provided.
+  - status: 400
+    code: INVALID_MTRANSID
+    message: Invalid metadata_trans_id.
+  - status: 400
+    code: INVALID_DWLDSID
+    message: Invalid download_session_id.
+  - status: 400
+    code: INVALID_DRETRYID
+    message: Invalid download_retry_id.
+  - status: 400
+    code: NO_DATA_FOUND_FOR_PID
+    message: No Data Found for the PID.
+  - status: 500
+    code: SER_UNEXPECT_FAIL
+    message: Service has encountered an unexpected failure.Please contact the support with the data requested.
+  - status: 400
+    code: IMAGE_GUID_INVALID
+    message: The image_guid provided in the request is invalid. Please provide a valid image_guid.
+  - status: 401
+    code: SW_NO_LONGER_AVL
+    message: Software for this product is no longer available.
+  - status: 400
+    code: SWT_NOT_PUBLISHED
+    message: software_type_id provided is not published to Cisco.com. Please provide a valid software_type_id.
+  - status: 401
+    code: PROD_REG_NA
+    message: The product needs to be registered and approved to call the Service. Please contact the support
+      team swc-it-support@cisco.com to get the product associated with the service.
+  - status: 401
+    code: PROD_REG_AV
+    message: Your client id does not have access to call the service requested. Please register a new
+      client id to call the service. Please contact the support team swc-it-support@cisco.com in case
+      of additional questions.
+  - status: 401
+    code: DNAC_REG_REQ
+    message: App needs to be registered to call the Service. Please contact the support team swc-it-support@cisco.com
+      to get the app associated with the service.
+  - status: 400
+    code: UDI_MISSING
+    message: udi is missing in the request. Please provide the udi of the requested device.
+  - status: 400
+    code: PID_MISSING
+    message: pid is missing in the request. Please provide a valid pid in the request.
+  - status: 400
+    code: MDFID_MISSING
+    message: mdfId is missing in the request. Please provide a valid mdfId in the request.
+  - status: 400
+    code: SWTID_MISSING
+    message: softwareTypeId not provided. Please provide a valid softwareTypeId.
+  - status: 400
+    code: CUR_REL_MISSING
+    message: currentReleaseVersion is missing in the request. Please provide a valid releaseVersion in
+      the request.
+  - status: 400
+    code: REL_MISSING
+    message: release is missing in the request. Please provide a valid release in the request.
+  - status: 400
+    code: OUTPUT_REL_INVALID
+    message: output_release value provided in the request is invalid. Please invoke the service with the
+      valid output_release.
+  - status: 400
+    code: OUT_REL_MISSING
+    message: output_release value provided in the request is invalid. Please invoke the service with the
+      valid output_release.
+  - status: 400
+    code: IMG_NM_MISSING
+    message: imageNames is missing in the request. Please provide atleast one valid imageNames.
+  - status: 400
+    code: MTRANSID_MISSING
+    message: metadata_trans_id is missing in the request. Please provide a valid metadata_trans_id in
+      the request.
+  - status: 400
+    code: IMAGE_LIMIT_EXCEEDED
+    message: The number of image names entered in the request has exceeded the limit.
+  - status: 400
+    code: MDFID_LIMIT_EXCEEDED
+    message: The number of MDF Ids entered in the request has exceeded the limit
+  - status: 400
+    code: PID_LIMIT_EXCEEDED
+    message: The number of PIDs entered in the request has exceeded the limit
+  - status: 400
+    code: Maximum_pid_names
+    message: '5'
+  - status: 400
+    code: MTRANSID_EXPIRED
+    message: metadata_trans_id had been previously granted that has expired due to time limit on its validity.
+      Please invoke the metadata service and initiate the download.
+  - status: 404
+    code: NO_DATA_FOUND
+    message: No Data Found.
+  - status: 400
+    code: IMAGE_GUID_MISSING
+    message: image_guid is missing in the request. Please provide a valid image_guid in the request.
+  - status: 200
+    code: IMG_CONTRACT_REQD
+    message: This image is contract registered. A valid Cisco service contract is required to download
+      software. The image information is provided by this service but you would not be able to get the
+      Image Download URL from the download service .You can add the service contracts to your profile
+      using the Profile Manager, or have your service access administrator do this for you.
+  - status: 200
+    code: IMG_K9
+    message: 'This image is cryptographic. The image information is provided by this service but you would
+      not be able to get the Image Download URL from the download service your attempt to download the
+      strong encryption software has not been approved or has been temporarily disabled. This is due to
+      one of the following conditions: You stated that you are a Government entity You did not agree to
+      the conditions listed in the Cisco Systems, Inc. Encryption Software Registration Form. You stated
+      you are a Military entity or Defense Contractor and therefore need to complete the following: You
+      stated you are from or in an embargo/restricted country. To discuss why you believe that you should
+      have access to strong crypto software, email tradeopscpr@cisco.com.'
+  - status: 200
+    code: CONTRACT_NOT_AUTH
+    message: 'Cisco service contract information indicates you are not authorized to download software
+      for the following product(s):'
+  - status: 200
+    code: SW_ADV_IMAGE
+    message: SA associated with Image
+  - status: 200
+    code: DEF_ADV_IMAGE
+    message: Deferral Advisory associated with Image
+  - status: 200
+    code: CONTRACT_LOGIN
+    message: 'To Download this software, you must Log In and have a valid service contract associated
+      to your Cisco.com profile. The image information is provided by this service but you would not be
+      able to get the Image Download URL from the download service.If you do not have a service contract
+      you can get one through: Your Cisco Account Team if you have a direct purchase agreement with Cisco
+      Or your Cisco Partner or Reseller. Once you have the service contract you must associate your service
+      contract to your Cisco.com user ID with Profile Manager.'
+  - status: 200
+    code: CONTRACT_ACCESS
+    message: 'You do not have access to download contract registered software. Go to OnRamp to request
+      a new account for Software Download. Request access by navigating the following path: New Account
+      Request > Request For Myself > Cisco Service > Software Download and Special File Publishing Access->
+      Software Download Access'
+  - status: 200
+    code: CONTRACT_IMG_REQ
+    message: A Cisco service contract is required to download this software. The image information is
+      provided by this service but you would not be able to get the Image Download URL from the download
+      service. Your Cisco Account Team if you have a direct purchase agreement with Cisco Your Cisco Partner
+      or Reseller You can add the service contracts to your profile using the Profile Manager have your
+      service access administrator do this for you.
+  - status: 200
+    code: CONTRACT_IMG_DWLD
+    message: A valid Cisco service contract is required to download software.You can add the service contracts
+      to your profile using the Profile Manager, or have your service access administrator do this for
+      you.
+  - status: 200
+    code: DWLD_WARN
+    message: You are receiving this warning message because our records indicates that you may not be
+      authorized to download for the following product(s)
+  - status: 200
+    code: DWLD_WARN1
+    message: 'If you feel this message is in error, please: Associate the relevant service contract to
+      your Cisco user ID, using the Cisco Profile Manager, or consult your service contract administrator.
+      Contact your Cisco representative, Partner or Reseller to ensure product(s) listed above are covered
+      on a service contract or subscription that is associated to your Cisco.com user ID. The Partner
+      Locator link may assist in locating your nearest partner. Email technical support mailto:ent-dl@cisco.com
+      for 24x7 assistance. To expedite your request, please include the following information: User ID
+      (Cisco.com ID used to download software) Contact Name Company Name Contract Number Product ID Desired
+      Software Release or File Name Please include the above message in your email.'
+  - status: 200
+    code: DWLD_WARN2
+    message: 'Please follow one of the options below to ensure that you are fully covered for service
+      in the future and that your Cisco.com profile is accurate and up-to-date: Contact your Cisco representative,
+      partner or reseller to ensure the products listed above are covered on a service contract that is
+      associated with your Cisco.com profile. The Partner Locator may assist in locating the nearest partner.
+      You can add the service contracts for these products to your profile using the Cisco Profile Manager,
+      or have your service access administrator do this for you. Your prompt attention to take action
+      per this notice is appreciated in order to avoid unnecessary interruptions or delays in the process
+      of downloading software.'
+  - status: 200
+    code: CONTRACT_REQ_DWLD
+    message: A valid Cisco service contract is required to download software.
+  - status: 200
+    code: IP_CHECK_FAIL
+    message: We are sorry, but analysis of your your internet protocol (IP) address does not permit us
+      to complete this transaction because it is originating from a territory that is not authorized to
+      receive Cisco products without a government issued license. If you believe this is an error please
+      email tradeopscpr@cisco.com for assistance and include the error code and transaction number listed
+      below. If you are in a non-authorized territory, and need help with export licenses, please contact
+      tradeopscpr@cisco.com. (Non-authorized territories are Cuba, Iran, Iraq, Libya, North Korea, Syria,
+      and Sudan.).
+  - status: 200
+    code: K9_REJECTED
+    message: Your attempt to download software has not been approved or has been temporarily disabled.
+      This is due to one of the following conditions:You stated that you are a Government entity. You
+      did not agree to the conditions listed in the Cisco Systems, Inc. Encryption Software Registration
+      Form. You stated you are a Military entity or Defense Contractor. You stated you are from or in
+      an embargo/restricted country. We are reviewing the information that you provided. Please try downloading
+      after 4 hours. To discuss why you believe that you should have access to this software, email tradeopscpr@cisco.com.
+  - status: 200
+    code: CONTRACT_REJECTED
+    message: Cisco service contract information indicates you are not authorized to download software
+      for the requested image.
+  - status: 200
+    code: C3_USERID_NMAP
+    message: UserId not mapped in C3.
+  - status: 200
+    code: K9_IMG_DWLD
+    message: This image is cryptographic. The image information is provided by this service but you would
+      not be able to get the Image Download URL from the download service until the software encryption
+      agreement is accepted.
+  - status: 200
+    code: LOGIN_IMG_DWLD
+    message: To Download this software, you must Log In with your Cisco.com user ID. The image information
+      is provided by this service but you would not be able to get the Image Download URL from the download
+      service.
+  - status: 200
+    code: LOGIN_CONTRACT_REQ
+    message: 'To Download this software, you must Log In and have a valid service contract associated
+      to your Cisco.com profile. If you do not have a service contract you can get one through: Your Cisco
+      Account Team if you have a direct purchase agreement with Cisco or your Cisco Partner or Reseller.
+      Once you have the service contract you must associate your service contract to your Cisco.com user
+      ID with Profile Manager.'
+  - status: 200
+    code: LOGIN_REQD
+    message: To Download this software, you must Log In with your Cisco.com user ID.
+  - status: 200
+    code: CONTRACT_REQD_DWLD
+    message: 'To Download this software, you must have a valid service contract associated to your Cisco.com
+      profile. If you do not have a service contract you can get one through: Your Cisco Account Team
+      if you have a direct purchase agreement with Cisco or your Cisco Partner or Reseller. Once you have
+      the service contract you must associate your service contract to your Cisco.com user ID with Profile
+      Manager.'
+  - status: 200
+    code: K9_FORM_AR
+    message: K9 form have not been accepted or rejected to continue download.
+  - status: 200
+    code: EULA_FORM_AR
+    message: Eula form have not been accepted or rejected to continue download.
+  - status: 200
+    code: K9_FORM_ACC
+    message: K9 form have not been accepted to continue download.
+  - status: 200
+    code: EULA_FORM_ACC
+    message: EULA form have not been accepted to continue download.
+  - status: 200
+    code: K9_EULA_FORM_AR
+    message: Both Eula and k9 form have not been accepted or rejected to continue download.
+  - status: 500
+    code: SER_UNEXPECT_FAIL
+    message: Service has encountered an unexpected failure.Please contact the support with the data requested.
+  - status: 401
+    code: INVALID_OUTPUT_RELEASE
+    message: Release Version value cannot be empty. Please provide a release version associated to the
+      MDF and Software type
+  - status: 200
+    code: CPR_ADDRESS_EXCEPTION_MSG
+    message: Thank you for registering with Cisco.com. In order to consume software or services we require
+      your full address. Please follow this link to return to profile manager to complete your profile.
+- api: Bug
+  docs: https://developer.cisco.com/docs/support-apis/bug/
+  error_count: 8
+  errors:
+  - status: 200
+    code: API_INVALID_INPUT
+    message: Invalid input parameter(s); multiple input parameters provided.
+  - status: 200
+    code: No records found
+    message: No records found.
+  - status: 200
+    code: EXCEEDED_OUTPUT
+    message: Server error; too many results.
+  - status: 403
+    code: API_MISSING_PARAMETERS
+    message: Input parameters are missing.
+  - status: 403
+    code: API_INVALID_INPUT
+    message: Input parameters are invalid; only one input parameter provided.
+  - status: 403
+    code: EXCEEDED_INPUTS
+    message: Too many input parameters.
+  - status: 403
+    code: API_NOTAUTHORIZED
+    message: User not authorized.
+  - status: 500
+    code: API_ERROR_01
+    message: Internal error occurred.
+- api: Case
+  docs: https://developer.cisco.com/docs/support-apis/case/
+  error_count: 38
+  errors:
+  - status: 400
+    code: Bad Request
+    message: Request does not conform to HTTP protocol.
+  - status: 403
+    code: INVALID_USERID AUTHENTICATION_ERROR
+    message: Invalid user ID.
+  - status: 403
+    code: INVALID_SORT_OPTION
+    message: Invalid sort_by value.
+  - status: 403
+    code: MISSING_INPUTS
+    message: Mandatory search criteria is missing.
+  - status: 403
+    code: INVALID_DATEFORMAT
+    message: Invalid date format.
+  - status: 403
+    code: INVALID_STATUSFLAG
+    message: Invalid status_flag value.
+  - status: 403
+    code: CASE_NOTFOUND
+    message: Case ID is not available in the system.
+  - status: 403
+    code: INVALID_DATERANGE
+    message: Invalid date range.
+  - status: 403
+    code: INVALID_CUSTOMERID
+    message: Invalid BID or BIDs are not associated with the specified user.
+  - status: 403
+    code: EXCEEDED_CASEIDS
+    message: Number of specified case IDs exceeds the maximum allowed.
+  - status: 403
+    code: EXCEEDED_CONTRACTIDS
+    message: Number of contract IDs exceeds the maximum allowed.
+  - status: 403
+    code: EXCEEDED_INPUTS
+    message: More than 1 contract ID was specified and/or more than 10 user IDs were specified.
+  - status: 403
+    code: EXCEEDED_USERIDS
+    message: More than 10 user IDs were specified.
+  - status: 403
+    code: EXCEEDED_BILLTOIDS
+    message: More than 5 Bill to customer IDs were specified.
+  - status: 403
+    code: CASE_API_FORBIDDEN
+    message: User does not have access to this service.
+  - status: 403
+    code: Not Authorized
+    message: Token is invalid.
+  - status: 403
+    code: Forbidden
+    message: You do not have permission to access the requested method or object.
+  - status: 403
+    code: Not Authorized
+    message: The API key associated with your request was not recognized, or the signature was incorrect.
+  - status: 403
+    code: Account Inactive
+    message: The API key you are using to access the Mashery API has not been approved or has been disabled.
+  - status: 403
+    code: Account Over Queries Per Second Limit
+    message: The API key you are using has attempted to access the API too many times in one second.
+  - status: 403
+    code: Account Over Rate Limit
+    message: The API key you are using has attempted to access the API too many times in the rate limiting
+      period.
+  - status: 403
+    code: Rate Limit Exceeded
+    message: The service you have requested is over capacity.
+  - status: 403
+    code: Unknown Referrer
+    message: Unknown referrer.
+  - status: 403
+    code: Service requires SSL
+    message: The service requires SSL.
+  - status: 404
+    code: API_UNAVAILABLE
+    message: Service is not configured in JVM.
+  - status: 414
+    code: Request URI Too Long
+    message: The request URI is too long.
+  - status: 415
+    code: INVALID_MEDIATYPE
+    message: Unsupported media type input by the user.
+  - status: 500
+    code: API_UNAVAILABLE
+    message: Database is down or currently unavailable.
+  - status: 500
+    code: UNKNOWN_FAILURE
+    message: Generic error.
+  - status: 500
+    code: SYSTEM_ERROR
+    message: Error while request data transformation to JSON.
+  - status: 500
+    code: SYSTEM_ERROR
+    message: SQL exception while invoking backend procedure.
+  - status: 500
+    code: SYSTEM_ERROR
+    message: Error while writing the data to HTTP response.
+  - status: 500
+    code: Internal Server Error
+    message: An internal server error has occurred (usually from the API).
+  - status: 502
+    code: Bad Gateway
+    message: Bad response from the server was received on the backend.
+  - status: 502
+    code: Proxy Error
+    message: An error from the server was received on the backend
+  - status: 503
+    code: API Maintenance/Service Unavailable
+    message: The service is unavailable due to maintenance.
+  - status: 504
+    code: Gateway Timeout
+    message: The backend service timed out.
+  - status: 596
+    code: Service Not Found
+    message: 'The service requested does not exist or is unavailable. Note: Most likey spaces were found
+      in the input parameters. Please check the input values.'
+- api: EoX
+  docs: https://developer.cisco.com/docs/support-apis/eox/
+  error_count: 25
+  errors:
+  - code: SSA_GENERIC_ERR
+    message: General error.
+  - code: SSA_ERR_001
+    message: The startDate value specified is invalid or formatted incorrectly. Please correct the startDate
+      value and try again.
+  - code: SSA_ERR_003
+    message: The number of SWReleaseString exceeds 20.
+  - code: SSA_ERR_007
+    message: The number of serial numbers exceeds 20.
+  - code: SSA_ERR_009
+    message: The number of product IDs exceeds 20.
+  - code: SSA_ERR_010
+    message: The responseencoding value is invalid. Please correct the responseencoding value and try
+      again. Valid responseencoding values are json and xml. OR The pageIndex value specified is invalid.
+      Please correct the pageIndex value and try again. OR The startDate and/or endDate value specified
+      is invalid or formatted incorrectly. Please correct the startDate and/or endDate value and try again.
+      OR The eoxAttrib value is invalid. Please correct the eoxAttrib value and try again. OR The productIDs
+      value(s) contain invalid characters. Please correct the productIDs value(s) and try again. OR The
+      serialNumbers value specified is invalid. Please correct the serialNumbers value and try again.
+      OR The OSType value is invalid. Please correct the OSType value and try again.
+  - code: SSA_ERR_011
+    message: The EoX database is currently unavailable. Please try again later or send an email to ssapi-pilot-help@cisco.com.
+  - code: SSA_ERR_012
+    message: The EoX database is currently unavailable. Please try again later or send an email to ssapi-pilot-help@cisco.com.
+  - code: SSA_ERR_013
+    message: There is a problem with this service. Please try again later or send an email to ssapi-pilot-help@cisco.com.
+  - code: SSA_ERR_014
+    message: The EoX database is currently unavailable. Please try again later or send an email to ssapi-pilot-help@cisco.com.
+  - code: SSA_ERR_015
+    message: No product IDs were found.
+  - code: SSA_ERR_016
+    message: The startDate value is empty. Please enter the startDate value and try again. OR The endDate
+      value is empty. Please enter the endDate value and try again. OR The productIDs value is empty.
+      Please enter the productIDs value and try again. OR The serialNumbers value is empty. Please enter
+      the serialNumbers value and try again. OR The SWReleaseString value is empty. Please enter the SWReleaseString
+      value and try again.
+  - code: SSA_ERR_018
+    message: The serial number to product ID translation service is currently down. Please try again later
+      or send an email to ssapi-pilot-help@cisco.com.
+  - code: SSA_ERR_022
+    message: 'EoX information does not exist for the following product bulletin(s): ...'
+  - code: SSA_ERR_023
+    message: 'EoX information does not exist for the following serial number(s): ...'
+  - code: SSA_ERR_024
+    message: 'EoX information does not exist for the following software string(s): ...'
+  - code: SSA_ERR_026
+    message: 'EoX information does not exist for the following product ID(s): ...'
+  - code: SSA_ERR_028
+    message: The pageIndex value specified has exceeded the limit of 5 characters. Please correct the
+      pageIndex value and try again.
+  - code: SSA_ERR_030
+    message: No product bulletins were found.
+  - code: SSA_ERR_031
+    message: The request parameter is not UTF-8 compliant.
+  - code: SSA_ERR_032
+    message: The productIDs wildcard search must contain a minimum of 3 characters. Please correct the
+      productIDs wildcard search value and try again.
+  - code: SSA_ERR_033
+    message: The AAA service is unavailable. Please try again later or send an email to ssapi-pilot-help@cisco.com.
+  - code: SSA_ERR_034
+    message: Access denied. You are not authenticated to the End-of-Life web service.
+  - code: SSA_ERR_036
+    message: Access denied. You are not authorized to access the End-of-Life web service.
+  - code: SSA_ERR_037
+    message: The CEPM service is unavailable. Please try again later or send an email to ssapi-pilot-help@external.cisco.com.
+- api: Product Information
+  docs: https://developer.cisco.com/docs/support-apis/product-information/
+  error_count: 6
+  errors:
+  - status: 403
+    code: Forbidden
+    message: You have not been granted permission to access the requested method or object.
+  - status: 403
+    code: Not Authorized
+    message: The API key associated with your request was not recognized or the signature was incorrect.
+  - status: 403
+    code: Account Inactive
+    message: The API key you are using to access the Mashery API has not been approved or has been disabled.
+  - status: 403
+    code: Account Over Queries Per Second Limit
+    message: The API key you are using has attempted to access the api too many times in one second.
+  - status: 403
+    code: Account Over Rate Limit
+    message: The API key you are using has attempted to access the api too many times in the rate limiting
+      period.
+  - status: 403
+    code: Rate Limit Exceeded
+    message: The service you have requested is over-capacity.
+- api: Service Order Return (RMA)
+  docs: https://developer.cisco.com/docs/support-apis/service-order-return-rma/
+  error_count: 3
+  errors:
+  - code: API_RMA_FORMAT_ERROR
+    message: Invalid RMA number format.
+  - code: API_DATEFORMAT_ERROR
+    message: Invalid date format supplied.
+  - code: SVO_NO_RECORDS
+    message: No order found for the given request.
+- api: Serial Number to Information
+  docs: https://developer.cisco.com/docs/support-apis/serial-number-to-information/
+  error_count: 7
+  errors:
+  - status: 200
+    code: NO_RECORDS_FOUND
+    message: No records found.
+  - status: 200
+    code: EXCEEDED_OUTPUT
+    message: Server error; too many results.
+  - status: 400
+    code: API_MISSING_PARAMETERS
+    message: Input parameters are missing.
+  - status: 400
+    code: API_INVALID_INPUT
+    message: Input parameters are invalid; only one input parameter provided.
+  - status: 400
+    code: EXCEEDED_INPUTS
+    message: Too many input parameters.
+  - status: 403
+    code: API_NOTAUTHORIZED
+    message: User not authorized.
+  - status: 500
+    code: API_ERROR_01
+    message: Internal error occurred.
+- api: Software Suggestion
+  docs: https://developer.cisco.com/docs/support-apis/software-suggestion/
+  error_count: 29
+  errors:
+  - status: 403
+    code: Forbidden
+    message: You have not been granted permission to access the requested method or object.
+  - status: 403
+    code: ERR_403_NOT_AUTHORIZED
+    message: The API key associated with your request was not recognized or the signature was incorrect.
+  - status: 403
+    code: ERR_403_DEVELOPER_INACTIVE
+    message: The API key you are using to access the APIx proxy has not been approved or has been disabled.
+  - status: 403
+    code: ERR_403_DEVELOPER_OVER_QPS
+    message: Account Over Queries Per Second Limit. The API key you are using has attempted to access
+      the API too many times in one second.
+  - status: 403
+    code: ERR_403_DEVELOPER_OVER_RATE
+    message: The API key you are using has attempted to access the API too many times in the rate limiting
+      period (1 day).
+  - status: 403
+    code: Rate Limit Exceeded
+    message: The service you have requested is over capacity.
+  - code: S3_BASEPID_NO_SUPPORT
+    message: This basePID is currently not supported
+    remediation: Please provide basePID that is supported
+  - code: S3_BASEPID_REQ
+    message: BasePID is a mandatory field
+    remediation: Please provide a basePID in the url
+  - code: S3_HW_INFORMATION_NOT_SUPPORTED
+    message: Hardware information not supported
+    remediation: Activate Hardware Supported Filtering
+  - code: S3_INV_BASEPID
+    message: Please enter valid basePID
+    remediation: Supply Valid basePID
+  - code: S3_INV_BASEPID
+    message: Too many basePids in the request
+    remediation: Please provide upto 10 or less basePids in the request
+  - code: S3_INV_CURR_IMG_REL
+    message: Given image doesn't correspond to the release
+    remediation: Supply Images corresponding to release
+  - code: S3_INV_IMAGE
+    message: Please enter a valid image
+    remediation: Please enter a valid image
+  - code: S3_INV_INPUT
+    message: Invalid inputs in url
+    remediation: Please provide proper input values
+  - code: S3_INV_MDFID
+    message: Too many mdfIds in the request
+    remediation: Please provide upto 10 or less mdfIds in the request
+  - code: S3_INV_MDFID
+    message: Invalid / non numeric mdfId
+    remediation: Please enter valid numeric mdfId
+  - code: S3_INV_QUERY_PARAM
+    message: 'Invalid query parameters in url : contentType'
+    remediation: We support only json response. Please provide contentType as json/JSON
+  - code: S3_INV_QUERY_PARAM
+    message: 'Invalid query parameters in url : invalidQueryParam'
+    remediation: Please refer S3 API user guide for valid parameter names & values
+  - code: S3_INV_QUERY_PARAM
+    message: Invalid query parameters in url
+    remediation: Please provide valid numeric values (1 <= pageIndex <=lastIndex ) for pageIndex
+  - code: S3_INV_QUERY_PARAM
+    message: 'Invalid query parameters in url : currentRelease'
+    remediation: Please provide proper current release
+  - code: S3_INV_QUERY_PARAM
+    message: 'Invalid query parameters in url : supportedHardware'
+    remediation: Please enter valid input
+  - code: S3_INV_QUERY_PARAM
+    message: 'Invalid query parameters in url : currentImage'
+    remediation: Please enter valid input
+  - code: S3_INV_RELEASE
+    message: Please enter a valid release version
+    remediation: Please enter a valid release version
+  - code: S3_INV_RELEASE_IMAGE
+    message: Please enter a valid image and release version
+    remediation: Please enter a valid image and release version
+  - code: S3_MDFID_NO_SUPPORT
+    message: Please enter valid baseMDF
+    remediation: Please provide mdfId that is supported
+  - code: S3_MDFID_REQ
+    message: MDFID is a mandatory field
+    remediation: Please provide a mdfId in the url
+  - code: S3_NO_REC_FOUND
+    message: No records found
+    remediation: Supply Valid input parameters
+  - code: S3_NO_SOFT_AVL
+    message: No software available for this product
+    remediation: Please provide a product which has software available
+  - code: S3_SERVICE_EXCEPTION_OCCURED
+    message: Supply Valid input parameters
+    remediation: Supply Valid input parameters
+totals:
+  apis: 8
+  documented_errors: 205

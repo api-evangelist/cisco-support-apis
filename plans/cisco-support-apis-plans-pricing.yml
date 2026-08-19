@@ -1,0 +1,58 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+provider: Cisco Support APIs
+providerId: cisco-support-apis
+generated: '2026-08-19'
+created: '2026-08-19'
+modified: '2026-08-19'
+method: searched
+source: >-
+  https://developer.cisco.com/docs/support-apis/user-onboarding-process/ and
+  https://www.cisco.com/c/en/us/support/services/smart-net-total-care/index.html
+description: >-
+  Cisco publishes NO pricing, no plans, no tiers and no free tier for the Support
+  APIs. The APIs are not sold as a product at all — they are an entitlement of an
+  existing support contract. Access is available only to Cisco Smart Net Total Care
+  (SNTC) customers and Cisco Partner Support Service (PSS) partners, and is granted
+  per-person through a role-based onboarding process rather than purchased. There is
+  therefore no self-serve sign-up, no published quota-per-tier, and no way for a
+  prospective integrator to price an integration before starting a support-contract
+  conversation.
+plan_count: 0
+free_tier: false
+self_serve_signup: false
+pricing_published: false
+plans: []
+access_model:
+  type: entitlement
+  prerequisite_contract:
+    - name: Smart Net Total Care (SNTC)
+      audience: end customers
+      url: https://www.cisco.com/c/en/us/support/services/smart-net-total-care/index.html
+    - name: Partner Support Service (PSS)
+      audience: Cisco partners
+      note: >-
+        The partner organization must hold at least one valid SNTC contract with the
+        delegating customer's organization, and must supply a PSS contract number
+        when requesting API access.
+  grant_path:
+    customer: >-
+      The customer's SNTC Delegated Administrator grants API access to a named
+      Cisco.com user via the Cisco Services Access Management tool.
+    partner: >-
+      The partner requests access through the Cisco Partner Support Service
+      community; the Smart Service Bureau verifies the PSS contract number and opens
+      a TAC case, and a TAC engineer grants access. Cisco documents this as taking
+      up to 48 hours.
+  then: >-
+    Once granted, the API user registers an application in the Cisco API Console and
+    selects which of the eight Support APIs it may call. Quota is per registered
+    application and visible only inside the console.
+notes:
+  - The cost of the API is the cost of the underlying support contract, which Cisco does not list publicly.
+  - There is no trial, sandbox tier or evaluation key for the Support APIs.
+evidence:
+  - url: https://developer.cisco.com/docs/support-apis/user-onboarding-process/
+    status: 200
+  - url: https://www.cisco.com/c/en/us/support/services/smart-net-total-care/index.html
+    status: 200

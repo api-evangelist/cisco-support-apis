@@ -1,0 +1,63 @@
+generated: '2026-08-19'
+method: searched
+source: https://developer.cisco.com/docs/support-apis/api-changelog/
+docs: https://developer.cisco.com/docs/support-apis/api-changelog/
+description: >-
+  Cisco publishes an "API Changelog" page for the Support APIs. As fetched on
+  2026-08-19 it contains no entries. Each of the eight APIs gets one heading and one
+  sub-heading reading "(changelog begins)", with no dated entry beneath it — the
+  page is a scaffold that was stood up and never filled in. That is recorded here as
+  the finding, not papered over: a consumer of these APIs currently has no published
+  record of what changed, when, or whether a change was breaking.
+scheme: path-segment major version (no version header, no dated releases)
+entry_count: 0
+dated_entries: false
+breaking_change_notice: false
+rss: false
+baseline_versions:
+  - api: Automated Software Distribution
+    changelog_says: v2.0
+    live_base_path: /software/v4.0/
+    mismatch: true
+  - api: Bug
+    changelog_says: v2.0
+    live_base_path: /bug/v2.0/
+    mismatch: false
+  - api: Case
+    changelog_says: v3.0
+    live_base_path: /case/v3/
+    mismatch: false
+  - api: EoX
+    changelog_says: v5.0
+    live_base_path: /supporttools/eox/rest/5/
+    mismatch: false
+  - api: Product Information
+    changelog_says: v1.0
+    live_base_path: /product/v1/
+    mismatch: false
+  - api: Serial Number to Information
+    changelog_says: v2.0
+    live_base_path: /sn2info/v2/
+    mismatch: false
+  - api: Service Order Return (RMA)
+    changelog_says: v1.0
+    live_base_path: /return/v1.0/
+    mismatch: false
+  - api: Software Suggestion
+    changelog_says: v1.0
+    live_base_path: /software/suggestion/v2/
+    mismatch: true
+entries: []
+other_change_channels:
+  - name: Services Discussion Forum
+    url: https://community.cisco.com/t5/custom/page/page-id/CustomFilteredByMultiLabel/page/1?board=j-blogs-dev-services&labels=Support%20APIs
+    status: 403
+    note: >-
+      Cisco's Developer Support page names this forum as "your primary source for
+      official updates". It returns 403 to an anonymous client, so the only stated
+      channel for API change announcements is not anonymously readable either.
+evidence:
+  - url: https://developer.cisco.com/docs/support-apis/api-changelog/
+    status: 200
+  - url: https://pubhub.devnetcloud.com/media/support-apis/docs/changelog.html
+    status: 200

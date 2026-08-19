@@ -1,0 +1,164 @@
+generated: '2026-08-19'
+method: derived
+status: candidate
+source: >-
+  Derived from the first-party Postman collection
+  (postman/cisco-support-apis-postman-collection.json) and the eight public API
+  reference pages on developer.cisco.com. No MCP server exists for the Cisco
+  Support APIs.
+description: >-
+  Cisco does NOT ship an MCP server for the Support APIs. This is a candidate tool
+  list only — it is what an MCP server over these APIs would expose, derived from
+  operations Cisco actually documents, so it is useful for planning and NOT a claim
+  that any agent surface exists. No `MCPServer` pointer is wired into apis.yml for
+  this file, because there is nothing for an agent to call.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: oauth
+  verified: probed
+searched:
+  - what: Support-APIs-specific MCP endpoint
+    probes:
+      - {url: 'https://apix.cisco.com/mcp', method: 'POST tools/list', status: 504}
+      - {url: 'https://developer.cisco.com/mcp', method: 'POST tools/list', status: 404}
+    result: none
+  - what: Cisco DevNet foundation-search MCP
+    probes:
+      - {url: 'https://devnet.cisco.com/v1/foundation-search-mcp/mcp', method: 'POST tools/list', status: 200}
+    result: >-
+      Live and answers tools/list anonymously, but it is NOT a Support APIs surface.
+      Its three tools are Meraki-API-Doc-Search, Meraki-API-OperationId-Search and
+      CatalystCenter-API-Doc-Search — Meraki and Catalyst Center documentation
+      search. It belongs to the Cisco DevNet platform (see the `cisco` provider
+      profile), not to this product, and is deliberately not claimed here.
+  - what: npm / MCP registries
+    result: no @cisco or Cisco Support APIs MCP package found
+candidate_tools:
+  - name: get_eox_by_product_id
+    description: Return end-of-life milestones for up to 20 Cisco product IDs.
+    source_operation: 'GET /supporttools/eox/rest/5/EOXByProductID/{pageIndex}/{productID}'
+  - name: get_eox_by_serial_number
+    description: Return end-of-life milestones for up to 20 serial numbers.
+    source_operation: 'GET /supporttools/eox/rest/5/EOXBySerialNumber/{pageIndex}/{serialNumber}'
+  - name: get_eox_by_dates
+    description: Return products whose end-of-life milestones fall in a date range.
+    source_operation: 'GET /supporttools/eox/rest/5/EOXByDates/{pageIndex}/{startDate}/{endDate}'
+  - name: get_eox_by_software_release
+    description: Return end-of-life milestones for up to 20 software release strings.
+    source_operation: 'GET /supporttools/eox/rest/5/EOXBySWReleaseString/{pageIndex}'
+  - name: get_coverage_status_by_serial
+    description: Return support-contract coverage status for serial numbers.
+    source_operation: 'GET /sn2info/v2/coverage/status/serial_numbers/{sr_no}'
+  - name: get_coverage_summary_by_serial
+    description: Return coverage summary (contract, warranty, dates) for serial numbers.
+    source_operation: 'GET /sn2info/v2/coverage/summary/serial_numbers/{sr_no}'
+  - name: get_coverage_summary_by_instance
+    description: Return coverage summary for instance numbers.
+    source_operation: 'GET /sn2info/v2/coverage/summary/instance_numbers/{instance_no}'
+  - name: get_orderable_pid_by_serial
+    description: Translate serial numbers to orderable product identifiers.
+    source_operation: 'GET /sn2info/v2/identifiers/orderable/serial_numbers/{sr_no}'
+  - name: get_owner_coverage_status
+    description: Return whether the requesting user is the covered owner of the serial numbers.
+    source_operation: 'GET /sn2info/v2/coverage/owner_status/serial_numbers/{sr_no}'
+  - name: get_product_info_by_serial
+    description: Return product information for serial numbers.
+    source_operation: 'GET /product/v1/information/serial_numbers/{sr_no}'
+  - name: get_product_info_by_pid
+    description: Return product information for product IDs.
+    source_operation: 'GET /product/v1/information/product_ids/{pid}'
+  - name: get_product_mdf_info
+    description: Return MDF (product hierarchy) information for product IDs.
+    source_operation: 'GET /product/v1/information/product_ids_mdf/{pid}'
+  - name: get_bug_by_id
+    description: Return details for specific Cisco bug IDs.
+    source_operation: 'GET /bug/v2.0/bugs/bug_ids/{bug_ids}'
+  - name: get_bugs_by_product_id
+    description: Return bugs affecting a base product ID.
+    source_operation: 'GET /bug/v2.0/bugs/products/product_id/{pid}'
+  - name: get_bugs_by_product_and_release
+    description: Return bugs for a product ID and software release.
+    source_operation: 'GET /bug/v2.0/bugs/products/product_id/{pid}/software_releases/{release}'
+  - name: search_bugs_by_keyword
+    description: Full-text search of Cisco bugs by keyword.
+    source_operation: 'GET /bug/v2.0/bugs/keyword/{keyword}'
+  - name: search_bugs_by_series_affected
+    description: Return bugs affecting a product series and software release.
+    source_operation: 'GET /bug/v2.0/bugs/product_series/{series}/affected_releases/{release}'
+  - name: search_bugs_by_series_fixed
+    description: Return bugs fixed in a product series software release.
+    source_operation: 'GET /bug/v2.0/bugs/product_series/{series}/fixed_in_releases/{release}'
+  - name: search_bugs_by_name_affected
+    description: Return bugs affecting a named product and software release.
+    source_operation: 'GET /bug/v2.0/bugs/product_name/{name}/affected_releases/{release}'
+  - name: search_bugs_by_name_fixed
+    description: Return bugs fixed in a named product software release.
+    source_operation: 'GET /bug/v2.0/bugs/product_name/{name}/fixed_in_releases/{release}'
+  - name: get_case_summary
+    description: Return summary information for TAC case IDs.
+    source_operation: 'GET /case/v3/cases/case_ids/{case_ids}'
+  - name: get_case_details
+    description: Return full detail for a single TAC case.
+    source_operation: 'GET /case/v3/cases/details/case_id/{case_id}'
+  - name: get_cases_by_contract
+    description: Return TAC cases for a contract ID within a date range.
+    source_operation: 'GET /case/v3/cases/contracts/contract_ids/{contract_id}'
+  - name: get_cases_by_user
+    description: Return TAC cases opened by up to 10 Cisco.com user IDs.
+    source_operation: 'GET /case/v3/cases/users/user_ids/{user_ids}'
+  - name: get_suggested_software_by_pid
+    description: Return suggested software releases and images for up to 10 product IDs.
+    source_operation: 'GET /software/suggestion/v2/suggestions/software/productIds/{productIds}'
+  - name: get_suggested_releases_by_pid
+    description: Return suggested releases (no images) for up to 10 product IDs.
+    source_operation: 'GET /software/suggestion/v2/suggestions/releases/productIds/{productIds}'
+  - name: get_compatible_software_by_pid
+    description: Return compatible and suggested releases for one product ID.
+    source_operation: 'GET /software/suggestion/v2/suggestions/compatible/productId/{basePID}'
+  - name: get_suggested_software_by_mdfid
+    description: Return suggested software releases and images for up to 10 MDF IDs.
+    source_operation: 'GET /software/suggestion/v2/suggestions/software/mdfIds/{mdfIds}'
+  - name: get_suggested_releases_by_mdfid
+    description: Return suggested releases (no images) for up to 10 MDF IDs.
+    source_operation: 'GET /software/suggestion/v2/suggestions/releases/mdfIds/{mdfIds}'
+  - name: get_compatible_software_by_mdfid
+    description: Return compatible and suggested releases for one MDF ID.
+    source_operation: 'GET /software/suggestion/v2/suggestions/compatible/mdfId/{mdfId}'
+  - name: get_rma_by_number
+    description: Return RMA (return material authorization) detail by RMA number.
+    source_operation: 'GET /return/v1.0/returns/rma_numbers/{rma_number}'
+  - name: get_rmas_by_user
+    description: Return RMAs raised by a Cisco.com user ID within a date range.
+    source_operation: 'GET /return/v1.0/returns/users/user_ids/{user_id}'
+  - name: get_software_metadata_by_pid_release
+    description: Return software release metadata for a PID and current release.
+    source_operation: 'POST /software/v4.0/metadata/pidrelease'
+  - name: get_software_metadata_by_pid_image
+    description: Return software image metadata for a PID and image.
+    source_operation: 'POST /software/v4.0/metadata/pidimage'
+  - name: get_software_download_url
+    description: Return signed download URLs for up to 5 software image GUIDs.
+    source_operation: 'POST /software/v4.0/download/pidimage'
+    caution: State-changing and entitlement-gated; no idempotency mechanism is documented.
+  - name: accept_k9_agreement
+    description: Electronically sign the K9 (cryptographic software) agreement.
+    source_operation: 'POST /software/v4.0/compliance/k9'
+    caution: Signs a legal agreement. Not safe to expose to an autonomous agent without a human gate.
+  - name: accept_eula
+    description: Electronically sign the Cisco End User License Agreement.
+    source_operation: 'POST /software/v4.0/compliance/eula'
+    caution: Signs a legal agreement. Not safe to expose to an autonomous agent without a human gate.
+candidate_tool_count: 37
+notes:
+  - >-
+    A real MCP server over these APIs would need the OAuth 2.0 client-credentials
+    token flow at https://id.cisco.com/oauth2/default/v1/token and an entitled SNTC
+    or PSS application registration; there is no anonymous mode.
+  - >-
+    Input schemas cannot be derived faithfully without the contract. The WADL and
+    Swagger files that would supply them are published but credential-gated (see
+    contracts/cisco-support-apis-published-contracts.yml), so no inputSchema is
+    asserted here rather than guessed.

@@ -1,0 +1,137 @@
+generated: '2026-08-19'
+method: derived
+source: >-
+  Derived from the Support APIs documentation (authentication, per-API reference and
+  error tables), the live authorization-server metadata saved in well-known/, and
+  live unauthenticated probes of apix.cisco.com / api.cisco.com. Each entry records
+  what was actually observed; a `conforms: false` here is a measured absence, not an
+  accusation.
+standards:
+  - id: oauth2
+    conforms: true
+    evidence: >-
+      OAuth 2.0 client credentials grant (RFC 6749 §4.4) at
+      https://id.cisco.com/oauth2/default/v1/token, documented verbatim in
+      https://developer.cisco.com/docs/support-apis/authentication/ and confirmed by
+      the authorization server's own grant_types_supported.
+  - id: oauth2-bearer-tokens
+    conforms: true
+    evidence: 'RFC 6750 Authorization: Bearer header on every API request.'
+  - id: oidc-discovery
+    conforms: true
+    evidence: >-
+      https://id.cisco.com/oauth2/default/.well-known/openid-configuration returns
+      200 with a complete OpenID Provider metadata document (issuer,
+      authorization_endpoint, token_endpoint, jwks_uri). Saved verbatim to
+      well-known/cisco-support-apis-openid-configuration.json.
+    caveat: >-
+      Discovery is served by Cisco Common Identity for the whole estate, not by the
+      Support APIs. The Support APIs documentation does not link it, and the API
+      hosts themselves serve no discovery document.
+  - id: rfc8414-oauth-authorization-server-metadata
+    conforms: false
+    evidence: >-
+      /.well-known/oauth-authorization-server returns 504 on apix.cisco.com and 404
+      on developer.cisco.com. Only the OIDC-flavoured discovery document exists.
+  - id: rfc9728-oauth-protected-resource
+    conforms: false
+    evidence: No /.well-known/oauth-protected-resource on any Support APIs host.
+  - id: oauth2-scopes
+    conforms: false
+    evidence: >-
+      No per-API or per-operation OAuth scopes are documented. Which APIs an
+      application may call is bound to the client_id at registration time in the
+      Cisco API Console, so a token carries no legible, least-privilege permission
+      statement.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: >-
+      No application/problem+json anywhere. Errors are proprietary code/message
+      pairs whose body field name differs per API (ErrorResponse, ErrorDetailsType,
+      EOXError). See errors/cisco-support-apis-problem-types.yml.
+  - id: http-status-semantics
+    conforms: false
+    evidence: >-
+      Validation errors are documented at HTTP 403 (Bug, Case), "no records found"
+      and entitlement warnings at HTTP 200 (Bug, SN2INFO, ASD), rate-limit
+      exhaustion at 403 rather than 429, and a non-IANA status 596 is returned by
+      the gateway.
+  - id: rfc6585-429-too-many-requests
+    conforms: false
+    evidence: >-
+      Throttling returns 403 with ERR_403_DEVELOPER_OVER_QPS /
+      ERR_403_DEVELOPER_OVER_RATE. No 429 and no Retry-After.
+  - id: ratelimit-headers
+    conforms: false
+    evidence: >-
+      No X-RateLimit-* and no RateLimit-* response headers documented or observed.
+      The only runtime headers are Mashery's X-Mashery-Error-Code and
+      X-Mashery-Message-ID.
+  - id: idempotency
+    conforms: false
+    evidence: >-
+      No idempotency key or replay mechanism. Automated Software Distribution is
+      POST-only and includes two agreement-signing operations with no idempotency
+      guarantee.
+  - id: pagination
+    conforms: partial
+    evidence: >-
+      Page-number pagination exists on all eight APIs, but the parameter is
+      page_index on four, pageIndex on three, and a path segment on EoX. No Link
+      header, no cursor, no next-page URL.
+  - id: rfc8594-sunset-header
+    conforms: false
+    evidence: No Sunset or Deprecation headers, and no published deprecation policy.
+  - id: rfc9116-security-txt
+    conforms: true
+    evidence: >-
+      https://www.cisco.com/.well-known/security.txt returns 200, is PGP-signed, and
+      carries Canonical, Contact (psirt@cisco.com), Encryption, Policy, CSAF and
+      Expires fields. Saved verbatim to well-known/cisco-support-apis-security.txt.
+    caveat: Served at the organization root; the API hosts serve no security.txt of their own.
+  - id: csaf-2.0
+    conforms: true
+    evidence: >-
+      https://www.cisco.com/.well-known/csaf/provider-metadata.json returns 200 —
+      Cisco publishes machine-readable security advisories in CSAF format.
+  - id: rfc8615-well-known-api-catalog
+    conforms: false
+    evidence: >-
+      /.well-known/api-catalog returns 404 on developer.cisco.com and 504 on the
+      gateway hosts. No RFC 9727 API catalogue is published.
+  - id: a2a-agent-card
+    conforms: false
+    evidence: >-
+      /.well-known/agent-card.json and /.well-known/agent.json return 404/403/504 on
+      every host probed. No agent card is served.
+  - id: openapi
+    conforms: false
+    evidence: >-
+      No OpenAPI or Swagger document is anonymously fetchable. Cisco publishes WADL
+      per API and a Swagger YAML for Automated Software Distribution v4.0, but only
+      behind the Cisco API Console sign-in (HTTP 403). See
+      contracts/cisco-support-apis-published-contracts.yml.
+  - id: wadl
+    conforms: partial
+    evidence: >-
+      A WADL 1.0 file is published for each of the eight APIs and linked from the
+      public documentation, but every download URL returns 403 to an unauthenticated
+      client.
+  - id: tls-1.2-or-higher
+    conforms: true
+    evidence: 'apix.cisco.com negotiates TLSv1.2; developer.cisco.com negotiates TLSv1.3. See security/cisco-support-apis-domain-security.yml.'
+  - id: hsts
+    conforms: partial
+    evidence: >-
+      developer.cisco.com sends Strict-Transport-Security with max-age 15552000;
+      apix.cisco.com sends no HSTS header.
+  - id: dnssec
+    conforms: false
+    evidence: cisco.com has no DNSKEY. CAA, SPF and DMARC (policy reject) are present.
+compliance_programs:
+  published_for_this_api: false
+  note: >-
+    Cisco operates a corporate Trust Portal and publishes CSAF advisories, but no
+    certification (SOC 2, ISO 27001, PCI DSS, FedRAMP) is named as covering the
+    Support APIs specifically in any anonymously readable page. See
+    security/cisco-support-apis-trust-center.yml.
