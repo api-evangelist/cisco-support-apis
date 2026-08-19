@@ -13,9 +13,13 @@ x-type: company
 x-source: cisco-family-buildout:2026-08-19
 x-parent: cisco
 x-relationship: product
-x-contract-status: none
-x-contract-note: No anonymously fetchable machine-readable contract was found on 2026-08-19 (probed; real 404s).
-  API Evangelist has not authored a substitute.
+x-contract-status: gated
+x-contract-note: Cisco DOES publish a machine-readable contract for all eight Support APIs — a WADL per API, linked
+  from the public docs, plus a Swagger YAML for Automated Software Distribution v4.0 — but every download resolves
+  to apiconsole.cisco.com and returns HTTP 403 without a Cisco API Console sign-in (probed 2026-08-19). No OpenAPI
+  is anonymously fetchable. The only first-party machine-readable artifact a member of the public can download is
+  the CiscoDevNet Postman collection (BSD-3, last updated 2020-08-07), saved verbatim under postman/. API Evangelist
+  has NOT authored a substitute contract. See contracts/cisco-support-apis-published-contracts.yml.
 specificationVersion: '0.23'
 created: '2026-08-19'
 modified: '2026-08-19'
@@ -26,21 +30,255 @@ tags:
 - Entitlement
 - Enterprise
 - Networking
-apis: []
+- End of Life
+- Defects
+- Case Management
+- Software Distribution
+- RMA
+- Smart Net Total Care
+apis:
+- aid: cisco-support-apis:cisco-eox-api
+  name: Cisco EoX API
+  description: The EoX API returns Cisco end-of-life and end-of-support milestones for hardware and software, queried
+    by product ID, serial number, software release string, or a date range across all products. It is the machine-readable
+    form of the Cisco End-of-Life bulletins, and the API an enterprise uses to reconcile an installed base against
+    Cisco's lifecycle calendar. Batches are capped at 20 identifiers per request and the page index is a path segment
+    rather than a query parameter.
+  humanURL: https://developer.cisco.com/docs/support-apis/eox/
+  baseURL: https://apix.cisco.com/supporttools/eox/rest/5
+  tags:
+  - Lifecycle
+  - End of Life
+  - Asset Management
+  - Networking
+  - Support
+  properties:
+  - type: Documentation
+    url: https://developer.cisco.com/docs/support-apis/eox/
+  - type: APIReference
+    url: https://developer.cisco.com/docs/support-apis/eox/
+- aid: cisco-support-apis:cisco-serial-number-to-information-api
+  name: Cisco Serial Number to Information API
+  description: 'The Serial Number to Information (SN2INFO) API translates Cisco device serial numbers and instance
+    numbers into entitlement facts: coverage status, coverage summary with contract and warranty dates, orderable
+    product identifier, and whether the requesting user is the covered owner. It is the entitlement lookup behind
+    most Smart Net Total Care reconciliation work, and the first call in almost every Cisco support automation.'
+  humanURL: https://developer.cisco.com/docs/support-apis/serial-number-to-information/
+  baseURL: https://apix.cisco.com/sn2info/v2
+  tags:
+  - Entitlement
+  - Asset Management
+  - Support
+  - Warranty
+  - Networking
+  properties:
+  - type: Documentation
+    url: https://developer.cisco.com/docs/support-apis/serial-number-to-information/
+  - type: APIReference
+    url: https://developer.cisco.com/docs/support-apis/serial-number-to-information/
+- aid: cisco-support-apis:cisco-product-information-api
+  name: Cisco Product Information API
+  description: 'The Product Information API returns Cisco product attributes for a set of serial numbers or product
+    identifiers, including the MDF product-hierarchy identifiers that the Software Suggestion and Bug APIs consume.
+    It is the joining table of the Support API portfolio: the service that turns a serial number found on a device
+    into the identifiers the rest of the APIs accept. Responses page at 500 records.'
+  humanURL: https://developer.cisco.com/docs/support-apis/product-information/
+  baseURL: https://apix.cisco.com/product/v1
+  tags:
+  - Product Data
+  - Asset Management
+  - Support
+  - Networking
+  - Reference Data
+  properties:
+  - type: Documentation
+    url: https://developer.cisco.com/docs/support-apis/product-information/
+  - type: APIReference
+    url: https://developer.cisco.com/docs/support-apis/product-information/
+- aid: cisco-support-apis:cisco-software-suggestion-api
+  name: Cisco Software Suggestion API
+  description: The Software Suggestion API returns the software release Cisco recommends for a product, chosen on
+    stability, longevity and adoption rate, along with the available images and compatibility against a currently-installed
+    release. It answers the question every network operations team asks before a maintenance window — what should
+    this device be running — for up to ten product IDs or MDF IDs at a time.
+  humanURL: https://developer.cisco.com/docs/support-apis/software-suggestion/
+  baseURL: https://apix.cisco.com/software/suggestion/v2
+  tags:
+  - Software Lifecycle
+  - Upgrades
+  - Support
+  - Networking
+  - Recommendations
+  properties:
+  - type: Documentation
+    url: https://developer.cisco.com/docs/support-apis/software-suggestion/
+  - type: APIReference
+    url: https://developer.cisco.com/docs/support-apis/software-suggestion/
+- aid: cisco-support-apis:cisco-bug-api
+  name: Cisco Bug API
+  description: 'The Bug API exposes the Cisco defect database: lookup by bug ID, by base product ID with or without
+    a software release, by product series or product name against affected or fixed-in releases, and free-text keyword
+    search. It is how an operator finds out whether a symptom in production is a known Cisco defect, and whether
+    a candidate upgrade release fixes it, without opening a TAC case first.'
+  humanURL: https://developer.cisco.com/docs/support-apis/bug/
+  baseURL: https://apix.cisco.com/bug/v2.0
+  tags:
+  - Defects
+  - Support
+  - Search
+  - Networking
+  - Operations
+  properties:
+  - type: Documentation
+    url: https://developer.cisco.com/docs/support-apis/bug/
+  - type: APIReference
+    url: https://developer.cisco.com/docs/support-apis/bug/
+- aid: cisco-support-apis:cisco-case-api
+  name: Cisco Case API
+  description: The Case API returns Cisco TAC support case information — a summary or full detail for specific case
+    IDs, or an aggregate view of cases by contract ID or by up to ten Cisco.com user IDs within a date range. It
+    is how a customer or partner pulls their TAC case load into their own ticketing or reporting system instead
+    of working out of Support Case Manager.
+  humanURL: https://developer.cisco.com/docs/support-apis/case/
+  baseURL: https://apix.cisco.com/case/v3
+  tags:
+  - Support
+  - Ticketing
+  - Case Management
+  - Operations
+  - Enterprise
+  properties:
+  - type: Documentation
+    url: https://developer.cisco.com/docs/support-apis/case/
+  - type: APIReference
+    url: https://developer.cisco.com/docs/support-apis/case/
+- aid: cisco-support-apis:cisco-automated-software-distribution-api
+  name: Cisco Automated Software Distribution API
+  description: 'The Automated Software Distribution API provides software release and image metadata for a device,
+    MD5 checksums, and signed download URLs, and it electronically signs the K9 cryptographic-software and End User
+    License agreements required before a download. It is the only write surface in the Support API portfolio: every
+    operation is a POST, two of them execute legal agreements, and none has a documented idempotency mechanism.'
+  humanURL: https://developer.cisco.com/docs/support-apis/automated-software-distribution/
+  baseURL: https://apix.cisco.com/software/v4.0
+  tags:
+  - Software Distribution
+  - Downloads
+  - Compliance
+  - Support
+  - Networking
+  properties:
+  - type: Documentation
+    url: https://developer.cisco.com/docs/support-apis/automated-software-distribution/
+  - type: APIReference
+    url: https://developer.cisco.com/docs/support-apis/automated-software-distribution/
+- aid: cisco-support-apis:cisco-service-order-return-api
+  name: Cisco Service Order Return (RMA) API
+  description: The Service Order Return API returns Return Material Authorization (RMA) information — detail for
+    a specific RMA number, or every RMA raised by a Cisco.com user within a date range. It is the machine-readable
+    side of the Service Order RMA Tool, used to track hardware replacement flowing out of a support contract without
+    polling a web UI.
+  humanURL: https://developer.cisco.com/docs/support-apis/service-order-return-rma/
+  baseURL: https://apix.cisco.com/return/v1.0
+  tags:
+  - RMA
+  - Returns
+  - Logistics
+  - Support
+  - Enterprise
+  properties:
+  - type: Documentation
+    url: https://developer.cisco.com/docs/support-apis/service-order-return-rma/
+  - type: APIReference
+    url: https://developer.cisco.com/docs/support-apis/service-order-return-rma/
 common:
-- type: Portal
-  url: https://developer.cisco.com/docs/support-apis/
+- type: VulnerabilityDisclosure
+  url: security/cisco-support-apis-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/cisco-support-apis-domain-security.yml
+- type: ParentCompany
+  url: https://apis.io/providers/cisco/
+  name: Cisco
+  x-relationship: product
+  x-generated-by: cisco-family:2026-08-19
 - type: Documentation
   url: https://developer.cisco.com/docs/support-apis/
 - type: APIReference
   url: https://developer.cisco.com/docs/support-apis/
-- type: ParentCompany
-  url: https://apis.io/providers/cisco/
-  name: Cisco
 - type: Portal
-  url: https://developer.cisco.com/
+  url: https://developer.cisco.com/site/support-apis/
+  name: Cisco Support APIs developer site
+- type: GettingStarted
+  url: https://developer.cisco.com/docs/support-apis/user-onboarding-process/
+  name: User onboarding process
+- type: Support
+  url: https://developer.cisco.com/docs/support-apis/developer-support/
+  name: Developer Support
+- type: GitHubOrganization
+  url: https://github.com/CiscoDevNet
+- type: Login
+  url: https://apiconsole.cisco.com/
+  name: Cisco API Console — register an application and obtain credentials
+- type: TermsOfService
+  url: https://www.cisco.com/c/en/us/about/legal/terms-conditions.html
+- type: PrivacyPolicy
+  url: https://www.cisco.com/c/en/us/about/legal/privacy-full.html
+- type: StatusPage
+  url: https://status.cisco.com/
+- type: ChangeLog
+  url: https://developer.cisco.com/docs/support-apis/api-changelog/
+  x-note: Published, but contains zero entries as of 2026-08-19 — see changelog/cisco-support-apis-changelog.yml
+- type: Postman
+  url: https://github.com/CiscoDevNet/Cisco_Support_API_Postman
+  name: Support APIs - DevNet (first-party Postman collection)
+- type: TrustCenter
+  url: https://trustportal.cisco.com/c/r/ctp/trust-portal.html
+- type: Security
+  url: security/cisco-support-apis-vulnerability-disclosure.yml
+  name: Cisco PSIRT vulnerability disclosure policy
+- type: WellKnown
+  url: well-known/cisco-support-apis-well-known.yml
+- type: SecurityTxt
+  url: well-known/cisco-support-apis-security.txt
+- type: Authentication
+  url: authentication/cisco-support-apis-authentication.yml
+- type: ErrorCatalog
+  url: errors/cisco-support-apis-problem-types.yml
+- type: Conventions
+  url: conventions/cisco-support-apis-conventions.yml
+- type: RateLimits
+  url: rate-limits/cisco-support-apis-rate-limits.yml
+- type: Plans
+  url: plans/cisco-support-apis-plans-pricing.yml
+- type: ChangeLog
+  url: changelog/cisco-support-apis-changelog.yml
+- type: Lifecycle
+  url: lifecycle/cisco-support-apis-lifecycle.yml
+- type: Packages
+  url: packages/cisco-support-apis-packages.yml
+- type: Conformance
+  url: conformance/cisco-support-apis-conformance.yml
+- type: DataModel
+  url: data-model/cisco-support-apis-data-model.yml
+- type: LLMsTxt
+  url: llms/cisco-support-apis-llms.txt
+- type: PostmanCollection
+  url: postman/cisco-support-apis-postman.yml
+- type: x-ContractAvailability
+  url: contracts/cisco-support-apis-published-contracts.yml
+  name: Published but credential-gated WADL + Swagger contracts
+- type: x-SandboxAbsence
+  url: sandbox/cisco-support-apis-sandbox.yml
+  name: No sandbox published; the only try-it console is behind the API Console sign-in (403).
+- type: x-TrustCenterProbe
+  url: security/cisco-support-apis-trust-center.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/cisco.png
+x-enrichment:
+  date: '2026-08-19'
+  status: enriched
+  artifacts_added: 23
+  pass: local-v1
