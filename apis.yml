@@ -123,6 +123,11 @@ apis:
   - Support
   - Search
   - Networking
+  tags_raw:
+  - Defects
+  - Support
+  - Search
+  - Networking
   - Operations
   properties:
   - type: Documentation
@@ -138,6 +143,11 @@ apis:
   humanURL: https://developer.cisco.com/docs/support-apis/case/
   baseURL: https://apix.cisco.com/case/v3
   tags:
+  - Support
+  - Ticketing
+  - Case Management
+  - Enterprise
+  tags_raw:
   - Support
   - Ticketing
   - Case Management
