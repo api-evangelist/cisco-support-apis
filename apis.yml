@@ -8,6 +8,17 @@ description: 'The Cisco Support APIs are the machine-readable side of Cisco''s T
 url: https://raw.githubusercontent.com/api-evangelist/cisco-support-apis/refs/heads/main/apis.yml
 type: Index
 access: 3rd-Party
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 position: Consumer
 x-type: company
 x-source: cisco-family-buildout:2026-08-19
