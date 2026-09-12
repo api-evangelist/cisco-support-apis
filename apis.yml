@@ -224,6 +224,8 @@ apis:
   - type: APIReference
     url: https://developer.cisco.com/docs/support-apis/service-order-return-rma/
 common:
+- type: Website
+  url: https://www.cisco.com/
 - type: VulnerabilityDisclosure
   url: security/cisco-support-apis-vulnerability-disclosure.yml
 - type: DomainSecurity
