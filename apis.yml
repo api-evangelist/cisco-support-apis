@@ -50,6 +50,19 @@ tags:
 - Support
 - Lifecycle
 - Asset Management
+- Entitlements
+- Enterprise
+- Networking
+- End of Life
+- Defects
+- Case Management
+- Software Distribution
+- RMA
+- Smart Net Total Care
+tags_raw:
+- Support
+- Lifecycle
+- Asset Management
 - Entitlement
 - Enterprise
 - Networking
@@ -89,6 +102,12 @@ apis:
   humanURL: https://developer.cisco.com/docs/support-apis/serial-number-to-information/
   baseURL: https://apix.cisco.com/sn2info/v2
   tags:
+  - Entitlements
+  - Asset Management
+  - Support
+  - Warranty
+  - Networking
+  tags_raw:
   - Entitlement
   - Asset Management
   - Support
