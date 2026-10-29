@@ -66,55 +66,119 @@
 
 The Cisco Support APIs are the machine-readable side of Cisco's TAC and lifecycle operations: EoX for end-of-life milestones, Serial Number to Information for entitlement and coverage, Product Information, Software Suggestion, Bug, Case, Automated Software Distribution, and Service Order Return. They are the APIs that let an enterprise reconcile its Cisco estate against support status programmatically, and are documented on Cisco DevNet behind a Smart Net Total Care or partner entitlement.
 
-## Ownership
+**Areas:** Support · Lifecycle · Asset Management · Entitlements · Enterprise · Networking · End of Life · Defects · Case Management · Software Distribution · RMA · Smart Net Total Care
 
-Part of the Cisco family.
+## Cisco Support APIs on APIs.io
 
-## Contract status
+Everything profiled for Cisco Support APIs is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/cisco-support-apis/](https://apis.io/providers/cisco-support-apis/)** — or go straight to one of the APIs or properties below.
 
-**Published, but credential-gated.** Cisco does publish a machine-readable contract for every one of
-the eight Support APIs — a WADL 1.0 file per API, linked from the public
-[Downloads](https://developer.cisco.com/docs/support-apis/cisco-support-apis-wadl-files/) page, plus a
-Swagger YAML for Automated Software Distribution v4.0 named in that API's reference. None of them is
-anonymously fetchable: every link resolves to `apiconsole.cisco.com` and returns **HTTP 403** with
-"Please Sign In or Register" (probed 2026-08-19). No OpenAPI is published at any public URL.
+### APIs (8)
 
-The one first-party machine-readable artifact a member of the public can download is Cisco's own
-Postman collection, [CiscoDevNet/Cisco_Support_API_Postman](https://github.com/CiscoDevNet/Cisco_Support_API_Postman)
-(BSD-3-Clause, last updated 2020-08-07), saved verbatim under `postman/`. It covers seven of the eight
-APIs and still points at the retired `api.cisco.com` host and `cloudsso.cisco.com` token endpoint.
+- [Cisco EoX API](https://apis.io/apis/cisco-support-apis/cisco-eox-api/) — The EoX API returns Cisco end-of-life and end-of-support milestones for hardware and software, queried by product ID, serial number, software release…
+- [Cisco Serial Number to Information API](https://apis.io/apis/cisco-support-apis/cisco-serial-number-to-information-api/) — The Serial Number to Information (SN2INFO) API translates Cisco device serial numbers and instance numbers into entitlement facts: coverage status, coverage…
+- [Cisco Product Information API](https://apis.io/apis/cisco-support-apis/cisco-product-information-api/) — The Product Information API returns Cisco product attributes for a set of serial numbers or product identifiers, including the MDF product-hierarchy…
+- [Cisco Software Suggestion API](https://apis.io/apis/cisco-support-apis/cisco-software-suggestion-api/) — The Software Suggestion API returns the software release Cisco recommends for a product, chosen on stability, longevity and adoption rate, along with the…
+- [Cisco Bug API](https://apis.io/apis/cisco-support-apis/cisco-bug-api/) — The Bug API exposes the Cisco defect database: lookup by bug ID, by base product ID with or without a software release, by product series or product name…
+- [Cisco Case API](https://apis.io/apis/cisco-support-apis/cisco-case-api/) — The Case API returns Cisco TAC support case information — a summary or full detail for specific case IDs, or an aggregate view of cases by contract ID or by…
+- [Cisco Automated Software Distribution API](https://apis.io/apis/cisco-support-apis/cisco-automated-software-distribution-api/) — The Automated Software Distribution API provides software release and image metadata for a device, MD5 checksums, and signed download URLs, and it…
+- [Cisco Service Order Return (RMA) API](https://apis.io/apis/cisco-support-apis/cisco-service-order-return-api/) — The Service Order Return API returns Return Material Authorization (RMA) information — detail for a specific RMA number, or every RMA raised by a Cisco.com…
 
-**API Evangelist has not authored a substitute contract.** Everything in this repository is either a
-document fetched from Cisco verbatim, a probe result with its HTTP status recorded, or a derivation
-from Cisco's own published reference pages. See `contracts/cisco-support-apis-published-contracts.yml`.
+### Published properties
 
-## What is here
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-| Artifact | What it records |
-|---|---|
-| `contracts/` | The eight published-but-403 WADL URLs and the ASD Swagger claim |
-| `postman/` | Cisco's own Postman collection + environment, verbatim |
-| `well-known/` | 30 probes across 6 hosts; `security.txt` and the OIDC discovery document saved verbatim |
-| `authentication/` | OAuth 2.0 client-credentials profile, token endpoint, entitlement gate |
-| `errors/` | 205 documented error codes across all eight APIs |
-| `conventions/` | Pagination, batching, versioning and error semantics — and how inconsistent they are |
-| `rate-limits/` | Enforcement is documented; the numbers are not published |
-| `plans/` | No pricing, no tiers, no self-serve — access is an SNTC/PSS contract entitlement |
-| `lifecycle/` | No deprecation policy, no Sunset headers, no SLA |
-| `changelog/` | The published changelog page has zero entries |
-| `packages/` | No first-party SDK in any language; two community Python libraries |
-| `data-model/` | The identifier graph that joins the eight APIs |
-| `mcp/` | No MCP server exists — a candidate tool list only, deliberately unwired |
-| `conformance/` | 22 standards assessed against observed evidence |
+#### MCP servers (1)
 
-No A2A agent card, MCP server, webhook/AsyncAPI surface, GraphQL, CLI, or agent skills were found.
+Model Context Protocol servers that expose the API to agents.
 
-## Verified links
+- [cisco-support-apis-mcp.yml](https://apis.io/servers/cisco-support-apis/cisco-support-apis-mcp-yml/)
 
-- [Portal](https://developer.cisco.com/docs/support-apis/)
+#### Security (4)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Cisco Support Apis Authentication](https://apis.io/security/cisco-support-apis/cisco-support-apis-authentication/)
+- [Cisco Support Apis Domain Security](https://apis.io/security/cisco-support-apis/cisco-support-apis-domain-security/)
+- [Cisco Support Apis Trust Center](https://apis.io/security/cisco-support-apis/cisco-support-apis-trust-center/)
+- [Cisco Support Apis Vulnerability Disclosure](https://apis.io/security/cisco-support-apis/cisco-support-apis-vulnerability-disclosure/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Cisco Support Apis Plans Pricing](https://apis.io/plans/cisco-support-apis/cisco-support-apis-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Cisco Support Apis Rate Limits](https://apis.io/rate-limits/cisco-support-apis/cisco-support-apis-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.cisco.com/)
 - [Documentation](https://developer.cisco.com/docs/support-apis/)
-- [APIReference](https://developer.cisco.com/docs/support-apis/)
-- [ParentCompany](https://apis.io/providers/cisco/)
-- [Portal](https://developer.cisco.com/)
+- [Getting started](https://developer.cisco.com/docs/support-apis/user-onboarding-process/)
+- [API reference](https://developer.cisco.com/docs/support-apis/)
+- [Support](https://developer.cisco.com/docs/support-apis/developer-support/)
+- [Changelog](https://developer.cisco.com/docs/support-apis/api-changelog/)
+- [Trust centre](https://trustportal.cisco.com/c/r/ctp/trust-portal.html)
+- [Terms of service](https://www.cisco.com/c/en/us/about/legal/terms-conditions.html)
+- [Privacy policy](https://www.cisco.com/c/en/us/about/legal/privacy-full.html)
+- [GitHub](https://github.com/CiscoDevNet)
+- [Status](https://status.cisco.com/)
 
-All URLs above returned HTTP 200 when probed on 2026-08-19.
+## API Evangelist rating
+
+**Kin Score 35.8** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 71.4 |
+| Contract quality | 0.0 |
+| Contract governance | 4.5 |
+| Operational transparency | 36.8 |
+| Developer ergonomics | 59.5 |
+| Access clarity | 42.1 |
+
+**Agent readiness 20.5** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+
+**Regulatory alignment 35.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/cisco-support-apis/](https://apis.io/providers/cisco-support-apis/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Cisco Support APIs: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/cisco-support-apis/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
